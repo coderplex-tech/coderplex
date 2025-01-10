@@ -21,6 +21,11 @@ export function Community({ session }: CommunityProps) {
       .select('*')
       .neq('user_id', session.user.id);
 
+    if (error) {
+      console.error('Error fetching profiles:', error);
+      return;
+    }
+
     if (data) {
       setProfiles(data);
     }
@@ -92,12 +97,12 @@ export function Community({ session }: CommunityProps) {
                   GitHub
                 </a>
               )}
-              {selectedProfile.twitter && (
+              {selectedProfile.linkedin && (
                 <a 
-                  href={selectedProfile.twitter} 
+                  href={selectedProfile.linkedin} 
                   className="block text-pink-600 dark:text-pink-400 hover:underline"
                 >
-                  Twitter
+                  LinkedIn
                 </a>
               )}
               {selectedProfile.website && (
@@ -106,14 +111,6 @@ export function Community({ session }: CommunityProps) {
                   className="block text-pink-600 dark:text-pink-400 hover:underline"
                 >
                   Website
-                </a>
-              )}
-              {selectedProfile.linkedin && (
-                <a 
-                  href={selectedProfile.linkedin} 
-                  className="block text-pink-600 dark:text-pink-400 hover:underline"
-                >
-                  LinkedIn
                 </a>
               )}
             </div>

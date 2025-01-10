@@ -34,6 +34,11 @@ export function UserProfile({ session }: UserProfileProps) {
       .eq('user_id', session.user.id)
       .single();
 
+    if (error) {
+      console.error('Error fetching profile:', error);
+      return;
+    }
+
     if (data) {
       setProfile(data);
       setFormData({
