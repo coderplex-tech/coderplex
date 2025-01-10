@@ -32,14 +32,25 @@ export function Community({ session }: CommunityProps) {
         {profiles.map(profile => (
           <div
             key={profile.user_id}
-            className="bg-white rounded-lg shadow p-6 cursor-pointer hover:shadow-lg transition-shadow"
+            className="bg-white dark:bg-dark-800 rounded-lg shadow p-6 cursor-pointer 
+            hover:shadow-lg transition-all duration-200"
             onClick={() => setSelectedProfile(profile)}
           >
-            <h3 className="text-xl font-bold mb-2">{profile.name}</h3>
-            <p className="text-gray-600 mb-4 line-clamp-2">{profile.bio}</p>
-            <div className="text-sm text-gray-500">
+            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+              {profile.name}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
+              {profile.bio}
+            </p>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              {profile.company && (
+                <p className="mb-2">Currently at {profile.company}</p>
+              )}
               {profile.skills?.split(',').slice(0, 3).map(skill => (
-                <span key={skill} className="inline-block bg-gray-100 rounded px-2 py-1 mr-2 mb-2">
+                <span 
+                  key={skill} 
+                  className="inline-block bg-gray-100 dark:bg-dark-700 rounded px-2 py-1 mr-2 mb-2"
+                >
                   {skill.trim()}
                 </span>
               ))}
@@ -50,16 +61,23 @@ export function Community({ session }: CommunityProps) {
 
       {selectedProfile && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-dark-800 rounded-lg max-w-2xl w-full p-6 max-h-[90vh] 
+          overflow-y-auto transition-colors duration-200">
             <div className="mb-6">
-              <h2 className="text-2xl font-bold mb-2">{selectedProfile.name}</h2>
-              <p className="text-gray-600">{selectedProfile.bio}</p>
+              <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">
+                {selectedProfile.name}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300">{selectedProfile.bio}</p>
             </div>
             <div className="mb-6">
-              <h3 className="font-semibold mb-2">Skills</h3>
+              <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Skills</h3>
               <div className="flex flex-wrap gap-2">
                 {selectedProfile.skills?.split(',').map(skill => (
-                  <span key={skill} className="bg-gray-100 rounded px-2 py-1">
+                  <span 
+                    key={skill} 
+                    className="bg-gray-100 dark:bg-gray-700 rounded px-2 py-1 
+                    text-gray-700 dark:text-gray-300"
+                  >
                     {skill.trim()}
                   </span>
                 ))}
@@ -67,24 +85,42 @@ export function Community({ session }: CommunityProps) {
             </div>
             <div className="space-y-2">
               {selectedProfile.github && (
-                <a href={selectedProfile.github} className="block text-blue-600 hover:underline">
+                <a 
+                  href={selectedProfile.github} 
+                  className="block text-pink-600 dark:text-pink-400 hover:underline"
+                >
                   GitHub
                 </a>
               )}
               {selectedProfile.twitter && (
-                <a href={selectedProfile.twitter} className="block text-blue-600 hover:underline">
+                <a 
+                  href={selectedProfile.twitter} 
+                  className="block text-pink-600 dark:text-pink-400 hover:underline"
+                >
                   Twitter
                 </a>
               )}
               {selectedProfile.website && (
-                <a href={selectedProfile.website} className="block text-blue-600 hover:underline">
+                <a 
+                  href={selectedProfile.website} 
+                  className="block text-pink-600 dark:text-pink-400 hover:underline"
+                >
                   Website
+                </a>
+              )}
+              {selectedProfile.linkedin && (
+                <a 
+                  href={selectedProfile.linkedin} 
+                  className="block text-pink-600 dark:text-pink-400 hover:underline"
+                >
+                  LinkedIn
                 </a>
               )}
             </div>
             <button
               onClick={() => setSelectedProfile(null)}
-              className="mt-6 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+              className="mt-6 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded 
+              transition-colors duration-200"
             >
               Close
             </button>

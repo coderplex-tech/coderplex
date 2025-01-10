@@ -4,8 +4,19 @@ export interface Profile {
   bio: string;
   skills: string;
   github: string;
-  twitter: string;
+  linkedin: string;
+  company: string;
   website: string;
   created_at?: string;
   updated_at?: string;
+}
+
+export interface FormData {
+  name: string;
+  bio: string;
+  skills: string;
+  github: string;
+  linkedin: string;
+  company: string;
+  website: string;
 }

@@ -5,6 +5,10 @@ import { UserProfile } from './components/UserProfile';
 import { Community } from './components/Community';
 import { Login } from './components/Login';
 import { Navbar } from './components/Navbar';
+import { LandingPage } from './components/LandingPage';
+import { Footer } from './components/Footer';
+import { AnimatedBackground } from './components/AnimatedBackground';
+import { ThemeProvider } from './context/ThemeContext';
 import { supabase } from './lib/supabase';
 
 function App() {
@@ -26,23 +30,35 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  if (!session) {
-    return <Login />;
-  }
-
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-100">
-        <Navbar />
-        <div className="container mx-auto px-4 py-8">
-          <Routes>
-            <Route path="/profile" element={<UserProfile session={session} />} />
-            <Route path="/community" element={<Community session={session} />} />
-            <Route path="/" element={<Navigate to="/profile" replace />} />
-          </Routes>
+    <ThemeProvider>
+      <Router>
+        <div className="min-h-screen flex flex-col bg-light-900 dark:bg-dark-900 transition-colors duration-200">
+          <AnimatedBackground />
+          <div className="relative flex flex-col min-h-screen">
+            {session && <Navbar />}
+            <main className={`flex-grow ${session ? 'container mx-auto px-4 py-8' : ''}`}>
+              <Routes>
+                {session ? (
+                  <>
+                    <Route path="/profile" element={<UserProfile session={session} />} />
+                    <Route path="/community" element={<Community session={session} />} />
+                    <Route path="/" element={<Navigate to="/profile" replace />} />
+                  </>
+                ) : (
+                  <>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </>
+                )}
+              </Routes>
+            </main>
+            <Footer />
+          </div>
         </div>
-      </div>
-    </Router>
+      </Router>
+    </ThemeProvider>
   );
 }
 

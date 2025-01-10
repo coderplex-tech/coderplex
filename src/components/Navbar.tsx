@@ -1,47 +1,66 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
 import { supabase } from '../lib/supabase';
+import { useTheme } from '../context/ThemeContext';
+import { Button } from './ui/Button';
 
 export function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
+  
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
+  };
   
   return (
-    <nav className="bg-white shadow">
+    <nav className="bg-light-800 dark:bg-dark-800 shadow-sm transition-colors duration-200">
       <div className="container mx-auto px-4">
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <span className="text-xl font-bold">Dev Community</span>
+              <span className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                coderplex
+              </span>
             </div>
             <div className="ml-6 flex space-x-4 items-center">
-              <Link
+              <Button
                 to="/profile"
-                className={`px-3 py-2 rounded-md text-sm font-medium ${
-                  location.pathname === '/profile'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
+                variant={location.pathname === '/profile' ? 'primary' : 'ghost'}
+                size="md"
               >
                 Profile
-              </Link>
-              <Link
+              </Button>
+              <Button
                 to="/community"
-                className={`px-3 py-2 rounded-md text-sm font-medium ${
-                  location.pathname === '/community'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
+                variant={location.pathname === '/community' ? 'primary' : 'ghost'}
+                size="md"
               >
                 Community
-              </Link>
+              </Button>
             </div>
           </div>
-          <div className="flex items-center">
-            <button
-              onClick={() => supabase.auth.signOut()}
-              className="text-gray-700 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium"
+          <div className="flex items-center space-x-4">
+            <Button
+              onClick={toggleTheme}
+              variant="secondary"
+              size="sm"
+              className="aspect-square"
+            >
+              {theme === 'dark' ? (
+                <SunIcon className="w-4 h-4" />
+              ) : (
+                <MoonIcon className="w-4 h-4" />
+              )}
+            </Button>
+            <Button
+              onClick={handleSignOut}
+              variant="ghost"
+              size="md"
             >
               Sign Out
-            </button>
+            </Button>
           </div>
         </div>
       </div>
