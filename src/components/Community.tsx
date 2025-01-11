@@ -28,8 +28,7 @@ export function Community({ session }: { session: Session }) {
   async function fetchProfiles() {
     const { data, error } = await supabase
       .from('profiles')
-      .select('*')
-      .neq('user_id', session.user.id);
+      .select('*');
 
     if (error) {
       console.error('Error fetching profiles:', error);
