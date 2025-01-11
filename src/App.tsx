@@ -14,6 +14,7 @@ import { PublicProfile } from './components/PublicProfile';
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     // Get initial session
@@ -30,6 +31,15 @@ function App() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    // Remove dark class by default
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   return (
     <ThemeProvider>
