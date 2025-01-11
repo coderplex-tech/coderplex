@@ -24,3 +24,54 @@ body {
     background-color: #ffffff;
   }
 }
+
+/* Auth UI Custom Styles */
+.auth-container {
+  gap: 1.25rem !important;
+}
+
+.auth-button {
+  height: 42px !important;
+  font-weight: 600 !important;
+}
+
+.auth-button[data-provider="github"] {
+  background-color: #24292e !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.auth-button[data-provider="github"]:hover {
+  background-color: #1a1e22 !important;
+}
+
+.auth-label {
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  color: #374151 !important;
+}
+
+.auth-input {
+  height: 42px !important;
+  border-radius: 0.375rem !important;
+}
+
+.auth-anchor {
+  color: #6b7280 !important;
+  font-size: 0.875rem !important;
+}
+
+.auth-anchor[href*="sign-up"] {
+  color: #2563eb !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+}
+
+.auth-message {
+  font-weight: 600 !important;
+  color: #374151 !important;
+}
+
+.auth-divider {
+  margin: 1.5rem 0 !important;
+}

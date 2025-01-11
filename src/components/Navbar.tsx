@@ -18,17 +18,21 @@ export function Navbar() {
     <nav className="bg-light-800 dark:bg-dark-800 shadow-sm transition-colors duration-200">
       <div className="container mx-auto px-4">
         <div className="flex justify-between h-16">
-          <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
+          <div className="flex items-center space-x-24">
+            <div className="flex-shrink-0">
               <span className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                 coderplex
               </span>
             </div>
-            <div className="ml-6 flex space-x-4 items-center">
+            <div className="flex space-x-2">
               <Button
                 to="/profile"
                 variant={location.pathname === '/profile' ? 'primary' : 'ghost'}
                 size="md"
+                className={`px-6 ${
+                  location.pathname !== '/profile' &&
+                  'border border-gray-200 dark:border-gray-700'
+                }`}
               >
                 Profile
               </Button>
@@ -36,6 +40,10 @@ export function Navbar() {
                 to="/community"
                 variant={location.pathname === '/community' ? 'primary' : 'ghost'}
                 size="md"
+                className={`px-6 ${
+                  location.pathname !== '/community' &&
+                  'border border-gray-200 dark:border-gray-700'
+                }`}
               >
                 Community
               </Button>
@@ -58,6 +66,7 @@ export function Navbar() {
               onClick={handleSignOut}
               variant="ghost"
               size="md"
+              className="border border-gray-200 dark:border-gray-700"
             >
               Sign Out
             </Button>

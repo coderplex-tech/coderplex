@@ -19,6 +19,7 @@ export interface Database {
           linkedin: string | null
           company: string | null
           website: string | null
+          role: string | null
           created_at: string
           updated_at: string | null
         }
@@ -31,6 +32,7 @@ export interface Database {
           linkedin?: string | null
           company?: string | null
           website?: string | null
+          role?: string | null
           created_at?: string
           updated_at?: string | null
         }
@@ -43,6 +45,7 @@ export interface Database {
           linkedin?: string | null
           company?: string | null
           website?: string | null
+          role?: string | null
           created_at?: string
           updated_at?: string | null
         }

@@ -10,6 +10,7 @@ import { Footer } from './components/Footer';
 import { AnimatedBackground } from './components/AnimatedBackground';
 import { ThemeProvider } from './context/ThemeContext';
 import { supabase } from './lib/supabase';
+import { PublicProfile } from './components/PublicProfile';
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -39,6 +40,7 @@ function App() {
             {session && <Navbar />}
             <main className={`flex-grow ${session ? 'container mx-auto px-4 py-8' : ''}`}>
               <Routes>
+                <Route path="/profile/:id" element={<PublicProfile />} />
                 {session ? (
                   <>
                     <Route path="/profile" element={<UserProfile session={session} />} />
