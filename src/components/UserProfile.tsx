@@ -62,6 +62,7 @@ export function UserProfile({ session }: UserProfileProps) {
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
+  const [pendingAvatarUrl, setPendingAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
     fetchProfile();
@@ -108,16 +109,19 @@ export function UserProfile({ session }: UserProfileProps) {
     setValidationErrors({});
     
     try {
-      // Validate form data
       const validatedData = profileSchema.parse(formData);
+
+      // Include pending avatar URL in the update if it exists
+      const updateData = {
+        user_id: session.user.id,
+        ...validatedData,
+        updated_at: new Date().toISOString(),
+        avatar_url: pendingAvatarUrl || profile?.avatar_url // Use pending URL if exists
+      };
 
       const { error: supabaseError } = await supabase
         .from('profiles')
-        .upsert({
-          user_id: session.user.id,
-          ...validatedData,
-          updated_at: new Date().toISOString()
-        });
+        .upsert(updateData);
 
       if (supabaseError) {
         console.error('Error updating profile:', supabaseError);
@@ -135,10 +139,11 @@ export function UserProfile({ session }: UserProfileProps) {
         company: validatedData.company || null,
         website: validatedData.website || null,
         role: validatedData.role || null,
-        avatar_url: profile?.avatar_url || null
+        avatar_url: pendingAvatarUrl || profile?.avatar_url || null
       };
 
       setProfile(profileData);
+      setPendingAvatarUrl(null); // Clear pending avatar URL
       setEditing(false);
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -208,7 +213,6 @@ export function UserProfile({ session }: UserProfileProps) {
       }
 
       const fileExt = file.name.split('.').pop();
-      // Include user ID in the file path
       const filePath = `${session.user.id}/${uuidv4()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
@@ -217,23 +221,18 @@ export function UserProfile({ session }: UserProfileProps) {
 
       if (uploadError) throw uploadError;
 
-      // Update profile with just the file path
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ avatar_url: filePath })
-        .eq('user_id', session.user.id);
-
-      if (updateError) throw updateError;
-
+      // Instead of updating profile immediately, store the path
+      setPendingAvatarUrl(filePath);
+      
       // Get signed URL for immediate display
       const signedUrl = await getAvatarUrl(filePath);
       setAvatarUrl(signedUrl);
 
-      // Update profile state
-      setProfile(prev => prev ? { ...prev, avatar_url: filePath } : null);
+      return filePath; // Return the path for use in profile update
     } catch (error) {
       console.error('Error uploading avatar:', error);
       setError('Failed to upload avatar. Please try again.');
+      return null;
     }
   };
 
@@ -443,9 +442,12 @@ export function UserProfile({ session }: UserProfileProps) {
 
       <PhotoUploadDialog
         isOpen={isPhotoDialogOpen}
-        onClose={() => setIsPhotoDialogOpen(false)}
+        onClose={() => {
+          setIsPhotoDialogOpen(false);
+          setPendingAvatarUrl(null); // Clear pending URL if dialog is closed without saving
+        }}
         onUpload={async (file) => {
-          await uploadAvatar(file);
+          const filePath = await uploadAvatar(file);
           setIsPhotoDialogOpen(false);
         }}
         onDelete={async () => {
