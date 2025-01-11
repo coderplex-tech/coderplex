@@ -56,7 +56,8 @@ export function UserProfile({ session }: UserProfileProps) {
     linkedin: '',
     company: '',
     website: '',
-    role: ''
+    role: '',
+    avatar_url: ''
   });
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -124,7 +125,7 @@ export function UserProfile({ session }: UserProfileProps) {
         return;
       }
 
-      const profileData = {
+      const profileData: Profile = {
         ...validatedData,
         user_id: session.user.id,
         bio: validatedData.bio || null,
@@ -133,7 +134,8 @@ export function UserProfile({ session }: UserProfileProps) {
         linkedin: validatedData.linkedin || null,
         company: validatedData.company || null,
         website: validatedData.website || null,
-        role: validatedData.role || null
+        role: validatedData.role || null,
+        avatar_url: profile?.avatar_url || null
       };
 
       setProfile(profileData);
@@ -178,13 +180,14 @@ export function UserProfile({ session }: UserProfileProps) {
     { key: 'website', type: 'url', placeholder: 'https://example.com', required: false },
   ];
 
-  const getAvatarUrl = async (path: string) => {
+  const getAvatarUrl = async (path: string | null) => {
+    if (!path) return null;
     try {
       const { data } = await supabase.storage
         .from('avatars')
-        .createSignedUrl(path, 3600); // URL valid for 1 hour
+        .createSignedUrl(path, 3600);
 
-      return data?.signedUrl;
+      return data?.signedUrl || null;
     } catch (error) {
       console.error('Error getting avatar URL:', error);
       return null;
@@ -277,8 +280,7 @@ export function UserProfile({ session }: UserProfileProps) {
           <Button
             onClick={() => setIsPhotoDialogOpen(true)}
             className="absolute -bottom-3 -right-3 bg-pink-600 hover:bg-pink-700 
-            text-white p-2 rounded-full shadow-lg"
-            style={{ transform: 'translate(0, 0)' }}
+            text-white p-2 rounded-full shadow-lg transform translate-0"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

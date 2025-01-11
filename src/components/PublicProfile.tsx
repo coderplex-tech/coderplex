@@ -10,13 +10,14 @@ export function PublicProfile() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const getAvatarUrl = async (path: string) => {
+  const getAvatarUrl = async (path: string | null) => {
+    if (!path) return null;
     try {
       const { data } = await supabase.storage
         .from('avatars')
         .createSignedUrl(path, 3600);
 
-      return data?.signedUrl;
+      return data?.signedUrl || null;
     } catch (error) {
       console.error('Error getting avatar URL:', error);
       return null;
