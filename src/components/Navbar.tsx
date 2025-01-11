@@ -31,7 +31,7 @@ export function Navbar() {
                 size="md"
                 className={`px-6 ${
                   location.pathname !== '/profile' &&
-                  'border border-gray-200 dark:border-gray-700'
+                  'border border-pink-600/30 hover:border-pink-600/40 hover:bg-pink-600/5'
                 }`}
               >
                 Profile
@@ -42,7 +42,7 @@ export function Navbar() {
                 size="md"
                 className={`px-6 ${
                   location.pathname !== '/community' &&
-                  'border border-gray-200 dark:border-gray-700'
+                  'border border-pink-600/30 hover:border-pink-600/40 hover:bg-pink-600/5'
                 }`}
               >
                 Community

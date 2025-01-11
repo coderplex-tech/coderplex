@@ -32,10 +32,9 @@ export function LandingPage() {
 
         {/* Hero Section */}
         <div className="flex flex-col items-center justify-center min-h-[80vh] text-center">
-          <h1 className="text-7xl md:text-8xl font-bold text-gray-800 dark:text-gray-100 mb-12 
-          hover:scale-105 transition-transform duration-300">
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 mb-12">
             <TypewriterText 
-              phrases={['coderplexDevCommunity()', 'come say hi']}
+              phrases={['coderplexDevCommunity()']}
               typingSpeed={150}
               deletingSpeed={100}
               pauseDuration={3000}
@@ -45,9 +44,9 @@ export function LandingPage() {
             to="/login"
             variant="primary"
             size="lg"
-            className="hover:scale-105"
+            className="hover:scale-105 transition-transform duration-300"
           >
-            Login
+            Login →
           </Button>
         </div>
       </div>

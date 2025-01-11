@@ -15,15 +15,15 @@ interface ButtonProps {
 const baseStyles = "inline-flex items-center justify-center font-medium transition-all duration-200 rounded-lg";
 
 const variants = {
-  primary: "bg-primary-dark hover:bg-primary-dark/90 text-white shadow-sm hover:shadow",
+  primary: "bg-pink-600 hover:bg-pink-700 text-white shadow-[0_0_10px_rgba(219,39,119,0.2)] border border-pink-600 hover:shadow-[0_0_15px_rgba(219,39,119,0.3)]",
   secondary: "bg-light-700 dark:bg-dark-700 text-gray-900 dark:text-gray-100 hover:bg-light-600 dark:hover:bg-dark-600",
-  ghost: "text-gray-700 dark:text-gray-200 hover:bg-light-700 dark:hover:bg-dark-700"
+  ghost: "bg-transparent text-gray-700 dark:text-gray-200 hover:text-pink-600 dark:hover:text-pink-400"
 };
 
 const sizes = {
   sm: "text-sm px-3 py-1.5",
   md: "text-sm px-4 py-2",
-  lg: "text-base px-6 py-3"
+  lg: "text-base px-5 py-2.5"
 };
 
 export function Button({ 
