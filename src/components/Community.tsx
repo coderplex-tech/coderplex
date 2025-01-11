@@ -57,7 +57,7 @@ export function Community({ session }: { session: Session }) {
         {profiles.map(profile => (
           <Link
             key={profile.user_id}
-            to={`/profile/${profile.user_id}`}
+            to={profile.user_id === session.user.id ? '/profile' : `/profile/${profile.user_id}`}
             className="block bg-white dark:bg-dark-800 rounded-lg shadow p-6 
             hover:shadow-lg transition-all duration-200"
           >
@@ -68,9 +68,14 @@ export function Community({ session }: { session: Session }) {
                 className="w-16 h-16 rounded-full object-cover flex-shrink-0"
               />
               <div className="flex-1 min-w-0">
-                <h3 className="text-xl font-bold mb-1 text-gray-900 dark:text-white truncate">
-                  {profile.name}
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold mb-1 text-gray-900 dark:text-white truncate">
+                    {profile.name}
+                  </h3>
+                  {profile.user_id === session.user.id && (
+                    <span className="text-sm text-pink-600 dark:text-pink-400">(You)</span>
+                  )}
+                </div>
                 {profile.role && (
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                     {profile.role}
