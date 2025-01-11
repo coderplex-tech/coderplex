@@ -4,6 +4,8 @@ import { supabase } from '../lib/supabase';
 import { Profile, FormData } from '../types';
 import { Button } from './ui/Button';
 import { z } from 'zod';
+import { v4 as uuidv4 } from 'uuid';
+import { PhotoUploadDialog } from './PhotoUploadDialog';
 
 interface UserProfileProps {
   session: Session;
@@ -57,6 +59,8 @@ export function UserProfile({ session }: UserProfileProps) {
     role: ''
   });
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -84,8 +88,15 @@ export function UserProfile({ session }: UserProfileProps) {
         linkedin: data.linkedin || '',
         company: data.company || '',
         website: data.website || '',
-        role: data.role || ''
+        role: data.role || '',
+        avatar_url: data.avatar_url || ''
       });
+
+      // Get signed URL if avatar exists
+      if (data.avatar_url) {
+        const signedUrl = await getAvatarUrl(data.avatar_url);
+        setAvatarUrl(signedUrl);
+      }
     }
   }
 
@@ -167,19 +178,137 @@ export function UserProfile({ session }: UserProfileProps) {
     { key: 'website', type: 'url', placeholder: 'https://example.com', required: false },
   ];
 
+  const getAvatarUrl = async (path: string) => {
+    try {
+      const { data } = await supabase.storage
+        .from('avatars')
+        .createSignedUrl(path, 3600); // URL valid for 1 hour
+
+      return data?.signedUrl;
+    } catch (error) {
+      console.error('Error getting avatar URL:', error);
+      return null;
+    }
+  };
+
+  const uploadAvatar = async (file: File) => {
+    try {
+      // Check file size (2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        throw new Error('File size must be less than 2MB');
+      }
+
+      // Check file type
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        throw new Error('File must be JPEG, PNG, or WebP');
+      }
+
+      const fileExt = file.name.split('.').pop();
+      // Include user ID in the file path
+      const filePath = `${session.user.id}/${uuidv4()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Update profile with just the file path
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: filePath })
+        .eq('user_id', session.user.id);
+
+      if (updateError) throw updateError;
+
+      // Get signed URL for immediate display
+      const signedUrl = await getAvatarUrl(filePath);
+      setAvatarUrl(signedUrl);
+
+      // Update profile state
+      setProfile(prev => prev ? { ...prev, avatar_url: filePath } : null);
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      setError('Failed to upload avatar. Please try again.');
+    }
+  };
+
+  const deleteAvatar = async () => {
+    try {
+      if (!profile?.avatar_url) return;
+
+      // Delete the file from storage
+      const { error: deleteError } = await supabase.storage
+        .from('avatars')
+        .remove([profile.avatar_url]);
+
+      if (deleteError) throw deleteError;
+
+      // Update profile to remove avatar_url
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: null })
+        .eq('user_id', session.user.id);
+
+      if (updateError) throw updateError;
+
+      // Update local state
+      setAvatarUrl(null);
+      setProfile(prev => prev ? { ...prev, avatar_url: null } : null);
+    } catch (error) {
+      console.error('Error deleting avatar:', error);
+      setError('Failed to delete avatar. Please try again.');
+    }
+  };
+
   return (
-    <div className="max-w-2xl mx-auto">
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 
-        rounded-lg text-red-600 dark:text-red-400 text-sm">
-          {error}
+    <div className="max-w-2xl mx-auto relative">
+      {/* Avatar - responsive positioning */}
+      <div className="w-full md:w-32 md:absolute md:-left-40 md:top-0 mb-6 md:mb-0 flex justify-center" 
+        style={{ height: '128px' }}
+      >
+        <div className="relative" style={{ width: '128px', height: '128px' }}>
+          <img
+            src={avatarUrl || `https://ui-avatars.com/api/?name=${profile?.name || 'User'}`}
+            alt="Profile"
+            className="w-full h-full rounded-full object-cover"
+          />
+          <Button
+            onClick={() => setIsPhotoDialogOpen(true)}
+            className="absolute -bottom-3 -right-3 bg-pink-600 hover:bg-pink-700 
+            text-white p-2 rounded-full shadow-lg"
+            style={{ transform: 'translate(0, 0)' }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-4 h-4"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
+              />
+            </svg>
+          </Button>
         </div>
-      )}
+      </div>
+
+      {/* Main card */}
       <div className="bg-white dark:bg-dark-800 rounded-lg shadow p-6 transition-colors duration-200">
         {!editing ? (
           <>
             <div className="mb-6">
-              <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {profile?.name || 'New User'}
               </h2>
               {profile?.role && (
@@ -309,6 +438,20 @@ export function UserProfile({ session }: UserProfileProps) {
           </form>
         )}
       </div>
+
+      <PhotoUploadDialog
+        isOpen={isPhotoDialogOpen}
+        onClose={() => setIsPhotoDialogOpen(false)}
+        onUpload={async (file) => {
+          await uploadAvatar(file);
+          setIsPhotoDialogOpen(false);
+        }}
+        onDelete={async () => {
+          await deleteAvatar();
+          setIsPhotoDialogOpen(false);
+        }}
+        hasExistingAvatar={!!profile?.avatar_url}
+      />
     </div>
   );
 }

@@ -10,6 +10,7 @@ export interface Profile {
   role: string | null;
   created_at?: string;
   updated_at?: string;
+  avatar_url: string | null;
 }
 
 export interface FormData {
@@ -21,4 +22,5 @@ export interface FormData {
   company: string;
   website: string;
   role: string;
+  avatar_url: string;
 }
