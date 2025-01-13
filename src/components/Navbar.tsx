@@ -5,7 +5,13 @@ import { useTheme } from '../context/ThemeContext';
 import { Button } from './ui/Button';
 import { useState } from 'react';
 
-export function Navbar() {
+interface NavbarProps {
+  isPublic?: boolean;
+  onSearchClick?: () => void;
+  isSearchVisible?: boolean;
+}
+
+export function Navbar({ isPublic, onSearchClick, isSearchVisible }: NavbarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
@@ -28,43 +34,67 @@ export function Navbar() {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Link 
-                to="/community" 
+                to={isPublic ? "/" : "/community"}
                 className="text-2xl font-bold text-gray-800 dark:text-gray-100 
                 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
-                onClick={() => handleNavigation('/community')}
               >
                 coderplex
               </Link>
             </div>
-            <div className="hidden md:flex md:ml-24 space-x-2">
-              <Button
-                to="/profile"
-                variant={location.pathname === '/profile' ? 'primary' : 'ghost'}
-                size="md"
-                className={`px-6 ${
-                  location.pathname !== '/profile' &&
-                  'border border-blue-600/30 hover:border-blue-600/40 hover:bg-blue-600/5'
-                }`}
-                onClick={() => handleNavigation('/profile')}
-              >
-                Profile
-              </Button>
-              <Button
-                to="/community"
-                variant={location.pathname === '/community' ? 'primary' : 'ghost'}
-                size="md"
-                className={`px-6 ${
-                  location.pathname !== '/community' &&
-                  'border border-blue-600/30 hover:border-blue-600/40 hover:bg-blue-600/5'
-                }`}
-                onClick={() => handleNavigation('/community')}
-              >
-                Community
-              </Button>
-            </div>
+            {!isPublic && (
+              <div className="hidden md:flex md:ml-24 space-x-2">
+                <Button
+                  to="/profile"
+                  variant={location.pathname === '/profile' ? 'primary' : 'ghost'}
+                  size="md"
+                  className={`px-6 ${
+                    location.pathname !== '/profile' &&
+                    'border border-blue-600/30 hover:border-blue-600/40 hover:bg-blue-600/5'
+                  }`}
+                  onClick={() => handleNavigation('/profile')}
+                >
+                  Profile
+                </Button>
+                <Button
+                  to="/community"
+                  variant={location.pathname === '/community' ? 'primary' : 'ghost'}
+                  size="md"
+                  className={`px-6 ${
+                    location.pathname !== '/community' &&
+                    'border border-blue-600/30 hover:border-blue-600/40 hover:bg-blue-600/5'
+                  }`}
+                  onClick={() => handleNavigation('/community')}
+                >
+                  Community
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
+            {!isPublic && onSearchClick && (
+              <Button
+                onClick={onSearchClick}
+                variant="secondary"
+                size="sm"
+                className="aspect-square"
+                aria-label={isSearchVisible ? "Close search" : "Open search"}
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </Button>
+            )}
             <Button
               onClick={toggleTheme}
               variant="secondary"
@@ -77,14 +107,16 @@ export function Navbar() {
                 <MoonIcon className="w-4 h-4" />
               )}
             </Button>
-            <Button
-              onClick={handleSignOut}
-              variant="ghost"
-              size="md"
-              className="border border-gray-200 dark:border-gray-700"
-            >
-              Sign Out
-            </Button>
+            {!isPublic && (
+              <Button
+                onClick={handleSignOut}
+                variant="ghost"
+                size="md"
+                className="border border-gray-200 dark:border-gray-700"
+              >
+                Sign Out
+              </Button>
+            )}
           </div>
 
           <div className="md:hidden flex items-center">

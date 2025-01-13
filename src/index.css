@@ -46,19 +46,19 @@ body {
 }
 
 .auth-label {
-  font-weight: 600 !important;
-  font-size: 0.95rem !important;
-  color: #374151 !important;
+  @apply text-gray-700 dark:text-gray-300 !important;
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
 }
 
 .auth-input {
-  height: 42px !important;
-  border-radius: 0.375rem !important;
+  @apply bg-transparent text-gray-900 dark:text-gray-100 !important;
+  border-color: #d1d5db !important;
 }
 
 .auth-anchor {
-  color: #6b7280 !important;
-  font-size: 0.875rem !important;
+  @apply text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 !important;
+  font-weight: 500 !important;
 }
 
 .auth-anchor[href*="sign-up"] {
@@ -68,10 +68,10 @@ body {
 }
 
 .auth-message {
-  font-weight: 600 !important;
-  color: #374151 !important;
+  @apply text-gray-600 dark:text-gray-400 !important;
+  font-size: 0.875rem !important;
 }
 
 .auth-divider {
-  margin: 1.5rem 0 !important;
+  @apply bg-gray-200 dark:bg-gray-700 !important;
 }

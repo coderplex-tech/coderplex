@@ -30,6 +30,30 @@ export default {
       glow: '0 0 10px rgba(37,99,235,0.2)',
       'glow-hover': '0 0 15px rgba(37,99,235,0.3)',
     },
+    keyframes: {
+      'fade-in-up': {
+        '0%': {
+          opacity: '0',
+          transform: 'translateY(10px)'
+        },
+        '100%': {
+          opacity: '1',
+          transform: 'translateY(0)'
+        },
+      },
+      'fade-in': {
+        '0%': {
+          opacity: '0',
+        },
+        '100%': {
+          opacity: '1',
+        },
+      },
+    },
+    animation: {
+      'fade-in-up': 'fade-in-up 2.5s ease-out forwards',
+      'fade-in': 'fade-in 2.5s ease-out forwards',
+    },
   },
   plugins: [],
 }
