@@ -1,12 +1,34 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { Profile } from '../types';
 
+// Store scroll position in this object outside the component
+const scrollPositions: { [key: string]: number } = {};
+
 export function Community({ session }: { session: Session }) {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [avatarUrls, setAvatarUrls] = useState<{ [key: string]: string }>({});
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Save scroll position before navigation
+  const handleProfileClick = (profileId: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    scrollPositions[location.pathname] = window.scrollY;
+    navigate(profileId === session.user.id ? '/profile' : `/profile/${profileId}`);
+  };
+
+  // Restore scroll position
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      const savedPosition = scrollPositions[location.pathname];
+      if (savedPosition) {
+        window.scrollTo(0, savedPosition);
+      }
+    });
+  }, [location.pathname, profiles]);
 
   const getAvatarUrl = async (path: string) => {
     try {
@@ -58,6 +80,7 @@ export function Community({ session }: { session: Session }) {
           <Link
             key={profile.user_id}
             to={profile.user_id === session.user.id ? '/profile' : `/profile/${profile.user_id}`}
+            onClick={(e) => handleProfileClick(profile.user_id, e)}
             className="block bg-white dark:bg-dark-800 rounded-lg p-4 md:p-6 
             shadow-[0_2px_8px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.2)]
             hover:shadow-[0_8px_16px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_8px_16px_rgba(0,0,0,0.3)]
