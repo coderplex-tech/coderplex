@@ -32,11 +32,18 @@ export function Login() {
             const { error } = await supabase.from('profiles').insert([
               {
                 user_id: user.id,
-                name: user.user_metadata.full_name || user.user_metadata.name || 'GitHub User',
+                name: user.user_metadata.full_name || user.user_metadata.name || 'New User',
                 avatar_url: user.user_metadata.avatar_url,
-                github: user.user_metadata.user_name 
+                // Handle provider-specific metadata
+                github: user.app_metadata.provider === 'github' 
                   ? `https://github.com/${user.user_metadata.user_name}`
-                  : null
+                  : null,
+                // Add Google-specific data
+                website: user.app_metadata.provider === 'google' && user.user_metadata.picture
+                  ? user.user_metadata.picture
+                  : null,
+                // You can also add email if needed (requires email scope)
+                // email: user.email,
               }
             ]);
 
@@ -80,9 +87,16 @@ export function Login() {
               },
             },
           }}
-          providers={['github']}
+          providers={['github', 'google']}
           view="sign_in"
           showLinks={false}
+          localization={{
+            variables: {
+              sign_in: {
+                social_provider_text: "Continue with {{provider}}"
+              },
+            },
+          }}
         />
       </div>
     </div>
