@@ -8,9 +8,41 @@ export function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Check if user is already signed in
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        navigate('/community');
+      }
+    });
+
     // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN') {
+        // Create a profile for new users
+        if (session) {
+          const { user } = session;
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select()
+            .eq('user_id', user.id)
+            .single();
+
+          if (!profile) {
+            // Create new profile if it doesn't exist
+            const { error } = await supabase.from('profiles').insert([
+              {
+                user_id: user.id,
+                name: user.user_metadata.full_name || user.user_metadata.name || 'GitHub User',
+                avatar_url: user.user_metadata.avatar_url,
+                github: user.user_metadata.user_name 
+                  ? `https://github.com/${user.user_metadata.user_name}`
+                  : null
+              }
+            ]);
+
+            if (error) console.error('Error creating profile:', error);
+          }
+        }
         navigate('/community');
       }
     });
@@ -35,82 +67,22 @@ export function Login() {
                 colors: {
                   brand: '#2563eb',
                   brandAccent: '#3b82f6',
-                  inputText: '#111827',
-                  inputBackground: 'white',
-                  inputBorder: '#e5e7eb',
-                  inputLabelText: '#374151',
                 },
-                fonts: {
-                  bodyFontFamily: `ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif`,
-                  buttonFontFamily: `ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif`,
-                },
-                fontSizes: {
-                  baseBodySize: '15px',
-                  baseInputSize: '15px',
-                  baseLabelSize: '15px',
-                  baseButtonSize: '15px',
-                }
               },
             },
             style: {
               button: {
                 fontWeight: '600',
-              },
-              anchor: {
-                color: '#6b7280',
-                fontSize: '14px',
-              },
-              message: {
-                fontWeight: '600',
-                color: '#374151',
-              },
-              label: {
-                fontWeight: '600',
-                color: '#374151',
+                fontSize: '15px',
               },
               container: {
-                gap: '12px',
-              },
-              divider: {
-                marginTop: '1.5rem',
-                marginBottom: '1.5rem',
-              },
-            },
-            className: {
-              container: 'auth-container',
-              button: 'auth-button',
-              anchor: 'auth-anchor',
-              divider: 'auth-divider',
-              label: 'auth-label',
-              input: 'auth-input',
-              message: 'auth-message',
-            },
-          }}
-          localization={{
-            variables: {
-              sign_in: {
-                email_label: 'Email',
-                password_label: 'Password',
-                button_label: 'Login',
-                loading_button_label: 'Logging in...',
-                social_provider_text: 'Continue with {{provider}}',
-                link_text: 'Already have an account? Login',
-              },
-              sign_up: {
-                email_label: 'Email',
-                password_label: 'Password',
-                button_label: 'Create Account',
-                loading_button_label: 'Creating account...',
-                social_provider_text: 'Continue with {{provider}}',
-                link_text: "Don't have an account? Create one",
-              },
-              forgotten_password: {
-                link_text: 'Forgot password?',
+                gap: '20px',
               },
             },
           }}
           providers={['github']}
           view="sign_in"
+          showLinks={false}
         />
       </div>
     </div>

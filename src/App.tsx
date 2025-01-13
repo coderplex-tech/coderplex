@@ -13,12 +13,13 @@ import { PublicProfile } from './components/PublicProfile';
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
-  const [darkMode, setDarkMode] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      setLoading(false);
     });
 
     // Listen for auth changes
@@ -31,14 +32,13 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  useEffect(() => {
-    // Remove dark class by default
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-light-900 dark:bg-dark-900">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-dark"></div>
+      </div>
+    );
+  }
 
   return (
     <ThemeProvider>
@@ -54,6 +54,7 @@ function App() {
                     <Route path="/profile" element={<UserProfile session={session} />} />
                     <Route path="/community" element={<Community session={session} />} />
                     <Route path="/" element={<Navigate to="/profile" replace />} />
+                    <Route path="*" element={<Navigate to="/profile" replace />} />
                   </>
                 ) : (
                   <>
