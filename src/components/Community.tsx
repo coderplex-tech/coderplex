@@ -52,28 +52,28 @@ export function Community({ session }: { session: Session }) {
   }
 
   return (
-    <div className="container mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="w-full px-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {profiles.map(profile => (
           <Link
             key={profile.user_id}
             to={profile.user_id === session.user.id ? '/profile' : `/profile/${profile.user_id}`}
-            className="block bg-white dark:bg-dark-800 rounded-lg shadow p-6 
+            className="block bg-white dark:bg-dark-800 rounded-lg shadow p-4 md:p-6 
             hover:shadow-lg transition-all duration-200"
           >
-            <div className="flex items-start space-x-4">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
               <img
                 src={avatarUrls[profile.user_id] || `https://ui-avatars.com/api/?name=${profile.name || 'User'}`}
                 alt={profile.name || 'User'}
                 className="w-16 h-16 rounded-full object-cover flex-shrink-0"
               />
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 text-center sm:text-left">
                 <div className="flex items-center gap-2">
                   <h3 className="text-xl font-bold mb-1 text-gray-900 dark:text-white truncate">
                     {profile.name}
                   </h3>
                   {profile.user_id === session.user.id && (
-                    <span className="text-sm text-pink-600 dark:text-pink-400">(You)</span>
+                    <span className="text-sm text-primary-DEFAULT dark:text-primary-light">(You)</span>
                   )}
                 </div>
                 {profile.role && (

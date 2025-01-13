@@ -1,6 +1,5 @@
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
 import { useTheme } from '../context/ThemeContext';
-import { TypewriterText } from './TypewriterText';
 import { Button } from './ui/Button';
 
 export function LandingPage() {
@@ -33,12 +32,7 @@ export function LandingPage() {
         {/* Hero Section */}
         <div className="flex flex-col items-center justify-center min-h-[80vh] text-center">
           <h1 className="text-5xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 mb-12">
-            <TypewriterText 
-              phrases={['coderplexDevCommunity()']}
-              typingSpeed={150}
-              deletingSpeed={100}
-              pauseDuration={3000}
-            />
+            coderplexDevCommunity()
           </h1>
           <Button
             to="/login"

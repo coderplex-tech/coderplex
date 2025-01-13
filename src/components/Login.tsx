@@ -20,9 +20,10 @@ export function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-transparent 
-    transition-colors duration-200">
-      <div className="max-w-md w-full p-6 bg-white/90 dark:bg-dark-800/90 backdrop-blur-sm rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold mb-6 text-center text-gray-900 dark:text-white">
+    transition-colors duration-200 px-4">
+      <div className="w-full max-w-md bg-white/90 dark:bg-dark-800/90 backdrop-blur-sm 
+      rounded-lg shadow-lg p-4 md:p-6">
+        <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center text-gray-900 dark:text-white">
           Welcome to Coderplex
         </h1>
         <Auth

@@ -265,179 +265,178 @@ export function UserProfile({ session }: UserProfileProps) {
   };
 
   return (
-    <div className="max-w-2xl mx-auto relative">
-      {/* Avatar - responsive positioning */}
-      <div className="w-full md:w-32 md:absolute md:-left-40 md:top-0 mb-6 md:mb-0 flex justify-center" 
-        style={{ height: '128px' }}
-      >
-        <div className="relative" style={{ width: '128px', height: '128px' }}>
-          <img
-            src={avatarUrl || `https://ui-avatars.com/api/?name=${profile?.name || 'User'}`}
-            alt="Profile"
-            className="w-full h-full rounded-full object-cover"
-          />
-          <Button
-            onClick={() => setIsPhotoDialogOpen(true)}
-            className="absolute -bottom-3 -right-3 bg-pink-600 hover:bg-pink-700 
-            text-white p-2 rounded-full shadow-lg transform translate-0"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-4 h-4"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
-              />
-            </svg>
-          </Button>
-        </div>
-      </div>
-
-      {/* Main card */}
-      <div className="bg-white dark:bg-dark-800 rounded-lg shadow p-6 transition-colors duration-200">
-        {!editing ? (
-          <>
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {profile?.name || 'New User'}
-              </h2>
-              {profile?.role && (
-                <p className="text-gray-600 dark:text-gray-300 mb-2">
-                  {profile.role}
-                </p>
-              )}
-              {profile?.company && (
-                <p className="text-gray-600 dark:text-gray-300 mb-2">
-                  Currently at {profile.company}
-                </p>
-              )}
-              <p className="text-gray-600 dark:text-gray-300">{profile?.bio || 'No bio yet'}</p>
-            </div>
-            <div className="mb-6">
-              <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Skills</h3>
-              <p className="text-gray-600 dark:text-gray-300">{profile?.skills || 'No skills listed'}</p>
-            </div>
-            <div className="space-y-2">
-              {profile?.github && (
-                <a href={profile.github} className="block text-pink-600 dark:text-pink-400 hover:underline">
-                  GitHub
-                </a>
-              )}
-              {profile?.linkedin && (
-                <a href={profile.linkedin} className="block text-pink-600 dark:text-pink-400 hover:underline">
-                  LinkedIn
-                </a>
-              )}
-              {profile?.website && (
-                <a href={profile.website} className="block text-pink-600 dark:text-pink-400 hover:underline">
-                  Website
-                </a>
-              )}
-            </div>
+    <div className="w-full max-w-4xl mx-auto px-4">
+      <div className="md:flex md:gap-8">
+        {/* Avatar - responsive positioning */}
+        <div className="mb-8 md:mb-0 flex justify-center md:block md:flex-shrink-0">
+          <div className="relative" style={{ width: '128px', height: '128px' }}>
+            <img
+              src={avatarUrl || `https://ui-avatars.com/api/?name=${profile?.name || 'User'}`}
+              alt="Profile"
+              className="w-full h-full rounded-full object-cover"
+            />
             <Button
-              onClick={() => setEditing(true)}
-              variant="primary"
-              size="md"
-              className="mt-4"
+              onClick={() => setIsPhotoDialogOpen(true)}
+              className="absolute -bottom-3 -right-3 bg-pink-600 hover:bg-pink-700 text-white p-2 rounded-full shadow-lg transform translate-0"
             >
-              Edit Profile
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-4 h-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
+                />
+              </svg>
             </Button>
-          </>
-        ) : (
-          <form onSubmit={updateProfile}>
-            <div className="space-y-4">
-              {formFields.map(({ key, type, placeholder, required }) => (
-                <div key={key}>
-                  <label className="block mb-1 capitalize text-gray-700 dark:text-gray-300">
-                    {key === 'linkedin' ? 'LinkedIn' : key}
-                    {required && <span className="text-red-500 ml-1">*</span>}
-                  </label>
-                  {type === 'textarea' ? (
-                    <textarea
-                      name={key}
-                      value={formData[key as keyof FormData]}
-                      onChange={handleInputChange}
-                      placeholder={placeholder}
-                      className={`w-full p-2 border rounded bg-white dark:bg-dark-700 
-                      text-gray-900 dark:text-white border-gray-300 dark:border-gray-600
-                      focus:ring-pink-500 focus:border-pink-500 dark:focus:ring-pink-400
-                      placeholder:text-gray-300 dark:placeholder:text-gray-600
-                      focus:placeholder:opacity-0
-                      ${validationErrors[key as keyof FormData] ? 'border-red-500' : ''}`}
-                      rows={3}
-                    />
-                  ) : (
-                    <input
-                      type={type}
-                      name={key}
-                      value={formData[key as keyof FormData]}
-                      onChange={handleInputChange}
-                      placeholder={placeholder}
-                      required={required}
-                      className={`w-full p-2 border rounded bg-white dark:bg-dark-700 
-                      text-gray-900 dark:text-white border-gray-300 dark:border-gray-600
-                      focus:ring-pink-500 focus:border-pink-500 dark:focus:ring-pink-400
-                      placeholder:text-gray-300 dark:placeholder:text-gray-600
-                      focus:placeholder:opacity-0
-                      ${validationErrors[key as keyof FormData] ? 'border-red-500' : ''}`}
-                    />
-                  )}
-                  {validationErrors[key as keyof FormData] && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {validationErrors[key as keyof FormData]}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 space-x-4">
+          </div>
+        </div>
+
+        {/* Main card */}
+        <div className="flex-grow bg-white dark:bg-dark-800 rounded-lg shadow p-4 md:p-6 transition-colors duration-200">
+          {!editing ? (
+            <>
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {profile?.name || 'New User'}
+                </h2>
+                {profile?.role && (
+                  <p className="text-gray-600 dark:text-gray-300 mb-2">
+                    {profile.role}
+                  </p>
+                )}
+                {profile?.company && (
+                  <p className="text-gray-600 dark:text-gray-300 mb-2">
+                    Currently at {profile.company}
+                  </p>
+                )}
+                <p className="text-gray-600 dark:text-gray-300">{profile?.bio || 'No bio yet'}</p>
+              </div>
+              <div className="mb-6">
+                <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Skills</h3>
+                <p className="text-gray-600 dark:text-gray-300">{profile?.skills || 'No skills listed'}</p>
+              </div>
+              <div className="space-y-2">
+                {profile?.github && (
+                  <a href={profile.github} className="block text-pink-600 dark:text-pink-400 hover:underline">
+                    GitHub
+                  </a>
+                )}
+                {profile?.linkedin && (
+                  <a href={profile.linkedin} className="block text-pink-600 dark:text-pink-400 hover:underline">
+                    LinkedIn
+                  </a>
+                )}
+                {profile?.website && (
+                  <a href={profile.website} className="block text-pink-600 dark:text-pink-400 hover:underline">
+                    Website
+                  </a>
+                )}
+              </div>
               <Button
-                type="submit"
+                onClick={() => setEditing(true)}
                 variant="primary"
                 size="md"
-                disabled={loading}
-                className="relative"
+                className="mt-4"
               >
-                {loading ? (
-                  <>
-                    <span className="opacity-0">Save</span>
-                    <span className="absolute inset-0 flex items-center justify-center">
-                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                    </span>
-                  </>
-                ) : (
-                  'Save'
-                )}
+                Edit Profile
               </Button>
-              <Button
-                type="button"
-                onClick={() => {
-                  setEditing(false);
-                  setError(null);
-                }}
-                variant="ghost"
-                size="md"
-                disabled={loading}
-              >
-                Cancel
-              </Button>
-            </div>
-          </form>
-        )}
+            </>
+          ) : (
+            <form onSubmit={updateProfile}>
+              <div className="space-y-4">
+                {formFields.map(({ key, type, placeholder, required }) => (
+                  <div key={key}>
+                    <label className="block mb-1 capitalize text-gray-700 dark:text-gray-300">
+                      {key === 'linkedin' ? 'LinkedIn' : key}
+                      {required && <span className="text-red-500 ml-1">*</span>}
+                    </label>
+                    {type === 'textarea' ? (
+                      <textarea
+                        name={key}
+                        value={formData[key as keyof FormData]}
+                        onChange={handleInputChange}
+                        placeholder={placeholder}
+                        className={`w-full p-2 border rounded bg-white dark:bg-dark-700 
+                        text-gray-900 dark:text-white border-gray-300 dark:border-gray-600
+                        focus:ring-pink-500 focus:border-pink-500 dark:focus:ring-pink-400
+                        placeholder:text-gray-300 dark:placeholder:text-gray-600
+                        focus:placeholder:opacity-0
+                        ${validationErrors[key as keyof FormData] ? 'border-red-500' : ''}`}
+                        rows={3}
+                      />
+                    ) : (
+                      <input
+                        type={type}
+                        name={key}
+                        value={formData[key as keyof FormData]}
+                        onChange={handleInputChange}
+                        placeholder={placeholder}
+                        required={required}
+                        className={`w-full p-2 border rounded bg-white dark:bg-dark-700 
+                        text-gray-900 dark:text-white border-gray-300 dark:border-gray-600
+                        focus:ring-pink-500 focus:border-pink-500 dark:focus:ring-pink-400
+                        placeholder:text-gray-300 dark:placeholder:text-gray-600
+                        focus:placeholder:opacity-0
+                        ${validationErrors[key as keyof FormData] ? 'border-red-500' : ''}`}
+                      />
+                    )}
+                    {validationErrors[key as keyof FormData] && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {validationErrors[key as keyof FormData]}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 space-x-4">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="md"
+                  disabled={loading}
+                  className="relative"
+                >
+                  {loading ? (
+                    <>
+                      <span className="opacity-0">Save</span>
+                      <span className="absolute inset-0 flex items-center justify-center">
+                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      </span>
+                    </>
+                  ) : (
+                    'Save'
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setEditing(false);
+                    setError(null);
+                  }}
+                  variant="ghost"
+                  size="md"
+                  disabled={loading}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          )}
+        </div>
       </div>
 
       <PhotoUploadDialog

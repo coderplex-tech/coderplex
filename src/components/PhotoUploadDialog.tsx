@@ -21,7 +21,7 @@ export function PhotoUploadDialog({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-dark-800 rounded-xl p-6 max-w-md w-full shadow-xl 
+      <div className="bg-white dark:bg-dark-800 rounded-xl p-4 md:p-6 max-w-md w-full shadow-xl 
       transform transition-all">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
