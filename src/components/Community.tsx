@@ -16,6 +16,7 @@ export function Community({ session }: { session: Session }) {
   const [avatarUrls, setAvatarUrls] = useState<{ [key: string]: string }>({});
   const location = useLocation();
   const navigate = useNavigate();
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Use debounced search query
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -109,6 +110,24 @@ export function Community({ session }: { session: Session }) {
 
   const handleClearSearch = () => {
     setSearchQuery('');
+  };
+
+  // Add scroll listener
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show button when page is scrolled down 400px
+      setShowScrollTop(window.scrollY > 400);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   return (
@@ -243,6 +262,32 @@ export function Community({ session }: { session: Session }) {
           No profiles found matching "{searchQuery}"
         </div>
       )}
+
+      {/* Scroll to top button */}
+      <button
+        onClick={scrollToTop}
+        className={`fixed bottom-20 right-6 p-2 rounded-full bg-white dark:bg-dark-800 
+        shadow-lg hover:shadow-xl transition-all duration-200 
+        text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white
+        border border-gray-200 dark:border-gray-700
+        ${showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}
+        `}
+        aria-label="Scroll to top"
+      >
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M5 10l7-7m0 0l7 7m-7-7v18"
+          />
+        </svg>
+      </button>
     </div>
   );
 }
