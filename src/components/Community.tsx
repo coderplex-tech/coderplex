@@ -3,15 +3,49 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { Profile } from '../types';
+import { useDebounce } from '../hooks/useDebounce';
 
 // Store scroll position in this object outside the component
 const scrollPositions: { [key: string]: number } = {};
 
 export function Community({ session }: { session: Session }) {
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [filteredProfiles, setFilteredProfiles] = useState<Profile[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
   const [avatarUrls, setAvatarUrls] = useState<{ [key: string]: string }>({});
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Use debounced search query
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  // Update search functionality to search multiple fields
+  useEffect(() => {
+    setIsSearching(true);
+    const searchTerm = debouncedSearchQuery.toLowerCase().trim();
+    
+    const filtered = profiles.filter(profile => {
+      if (!searchTerm) return true;
+      
+      const searchFields = [
+        profile.name,
+        profile.role,
+        profile.company,
+        profile.skills
+      ];
+
+      return searchFields.some(field => 
+        field?.toLowerCase().includes(searchTerm)
+      );
+    });
+
+    // Add small delay before removing loading state
+    setTimeout(() => {
+      setFilteredProfiles(filtered);
+      setIsSearching(false);
+    }, 100);
+  }, [debouncedSearchQuery, profiles]);
 
   // Save scroll position before navigation
   const handleProfileClick = (profileId: string, event: React.MouseEvent) => {
@@ -73,10 +107,80 @@ export function Community({ session }: { session: Session }) {
     }
   }
 
+  const handleClearSearch = () => {
+    setSearchQuery('');
+  };
+
   return (
     <div className="container mx-auto px-4 max-w-7xl">
+      {/* Search Bar */}
+      <div className="mb-8">
+        <div className="relative max-w-md mx-auto">
+          <input
+            type="text"
+            placeholder="Search by name, role, company, or skills..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-2 pl-10 pr-10 text-gray-900 dark:text-gray-100 
+            bg-white dark:bg-dark-800 border border-gray-300 dark:border-gray-700 
+            rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
+            dark:focus:ring-blue-400 transition-colors duration-200"
+          />
+          <svg
+            className={`absolute left-3 top-2.5 h-5 w-5 text-gray-400 dark:text-gray-600
+            ${isSearching ? 'animate-spin' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            {isSearching ? (
+              // Loading spinner icon
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            ) : (
+              // Search icon
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            )}
+          </svg>
+
+          {/* Clear Button */}
+          {searchQuery && (
+            <button
+              onClick={handleClearSearch}
+              className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 
+              dark:text-gray-600 dark:hover:text-gray-400 transition-colors duration-200"
+              aria-label="Clear search"
+            >
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Profile Grid - Update to use filteredProfiles */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        {profiles.map(profile => (
+        {filteredProfiles.map(profile => (
           <Link
             key={profile.user_id}
             to={profile.user_id === session.user.id ? '/profile' : `/profile/${profile.user_id}`}
@@ -132,6 +236,13 @@ export function Community({ session }: { session: Session }) {
           </Link>
         ))}
       </div>
+
+      {/* No Results Message */}
+      {filteredProfiles.length === 0 && (
+        <div className="text-center text-gray-600 dark:text-gray-400 mt-8">
+          No profiles found matching "{searchQuery}"
+        </div>
+      )}
     </div>
   );
 }
