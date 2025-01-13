@@ -15,6 +15,11 @@ export function Navbar() {
     await supabase.auth.signOut();
     navigate('/');
   };
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setIsMenuOpen(false);
+  };
   
   return (
     <nav className="bg-light-800 dark:bg-dark-800 shadow-sm transition-colors duration-200">
@@ -26,6 +31,7 @@ export function Navbar() {
                 to="/community" 
                 className="text-2xl font-bold text-gray-800 dark:text-gray-100 
                 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                onClick={() => handleNavigation('/community')}
               >
                 coderplex
               </Link>
@@ -39,6 +45,7 @@ export function Navbar() {
                   location.pathname !== '/profile' &&
                   'border border-blue-600/30 hover:border-blue-600/40 hover:bg-blue-600/5'
                 }`}
+                onClick={() => handleNavigation('/profile')}
               >
                 Profile
               </Button>
@@ -50,6 +57,7 @@ export function Navbar() {
                   location.pathname !== '/community' &&
                   'border border-blue-600/30 hover:border-blue-600/40 hover:bg-blue-600/5'
                 }`}
+                onClick={() => handleNavigation('/community')}
               >
                 Community
               </Button>
@@ -108,7 +116,7 @@ export function Navbar() {
               variant={location.pathname === '/profile' ? 'primary' : 'ghost'}
               size="md"
               className="w-full justify-center"
-              onClick={() => setIsMenuOpen(false)}
+              onClick={() => handleNavigation('/profile')}
             >
               Profile
             </Button>
@@ -117,7 +125,7 @@ export function Navbar() {
               variant={location.pathname === '/community' ? 'primary' : 'ghost'}
               size="md"
               className="w-full justify-center"
-              onClick={() => setIsMenuOpen(false)}
+              onClick={() => handleNavigation('/community')}
             >
               Community
             </Button>

@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface ButtonProps {
   children: ReactNode;
@@ -36,13 +36,25 @@ export function Button({
   disabled = false,
   type = 'button'
 }: ButtonProps) {
+  const navigate = useNavigate();
   const buttonStyles = `${baseStyles} ${variants[variant]} ${sizes[size]} ${
     disabled ? 'opacity-50 cursor-not-allowed' : ''
   } ${className}`;
 
+  const handleClick = (e: React.MouseEvent) => {
+    if (disabled) return;
+    if (onClick) {
+      e.preventDefault(); // Prevent default navigation
+      onClick();
+    }
+    if (to && !onClick) {
+      navigate(to);
+    }
+  };
+
   if (to && !disabled) {
     return (
-      <Link to={to} className={buttonStyles}>
+      <Link to={to} className={buttonStyles} onClick={handleClick}>
         {children}
       </Link>
     );
@@ -50,7 +62,7 @@ export function Button({
 
   return (
     <button 
-      onClick={onClick} 
+      onClick={handleClick} 
       className={buttonStyles}
       disabled={disabled}
       type={type}

@@ -28,3 +28,7 @@ dist-ssr
 !vite.config.js
 !tailwind.config.js
 *.js.map
+
+.env
+.env.local
+.env.*.local

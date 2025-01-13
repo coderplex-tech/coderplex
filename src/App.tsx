@@ -53,8 +53,8 @@ function App() {
                   <>
                     <Route path="/profile" element={<UserProfile session={session} />} />
                     <Route path="/community" element={<Community session={session} />} />
-                    <Route path="/" element={<Navigate to="/profile" replace />} />
-                    <Route path="*" element={<Navigate to="/profile" replace />} />
+                    <Route path="/" element={<Navigate to="/community" replace />} />
+                    <Route path="*" element={<Navigate to="/community" replace />} />
                   </>
                 ) : (
                   <>

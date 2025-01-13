@@ -31,8 +31,9 @@ export function LandingPage() {
 
         {/* Hero Section */}
         <div className="flex flex-col items-center justify-center min-h-[80vh] text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-800 dark:text-gray-100 mb-12">
-            coderplexDevCommunity()
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 dark:text-gray-100 mb-12 px-4">
+            <span className="inline-block">coderplexDev</span>
+            <span className="inline-block">Community()</span>
           </h1>
           <Button
             to="/login"
