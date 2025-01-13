@@ -3,45 +3,52 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Profile } from '../types';
 
+function ProfileImageSkeleton() {
+  return (
+    <div className="relative" style={{ width: '128px', height: '128px' }}>
+      <div className="w-full h-full rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </div>
+  );
+}
+
 export function PublicProfile() {
   const { id } = useParams();
-  console.log('PublicProfile rendered with id:', id);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const getAvatarUrl = async (path: string | null) => {
-    if (!path) return null;
-    try {
-      const { data } = await supabase.storage
-        .from('avatars')
-        .createSignedUrl(path, 3600);
-
-      return data?.signedUrl || null;
-    } catch (error) {
-      console.error('Error getting avatar URL:', error);
-      return null;
-    }
-  };
+  const [isLoadingAvatar, setIsLoadingAvatar] = useState(true);
 
   useEffect(() => {
     async function fetchProfile() {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select()
-        .eq('user_id', id)
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select()
+          .eq('user_id', id)
+          .single();
 
-      if (error) {
-        console.error('Error fetching profile:', error);
-      } else {
-        setProfile(data);
-        if (data?.avatar_url) {
-          const signedUrl = await getAvatarUrl(data.avatar_url);
-          setAvatarUrl(signedUrl);
+        if (error) {
+          console.error('Error fetching profile:', error);
+        } else {
+          setProfile(data);
+          
+          // Get signed URL if avatar exists
+          if (data?.avatar_url) {
+            const { data: urlData } = await supabase.storage
+              .from('avatars')
+              .createSignedUrl(data.avatar_url, 3600);
+              
+            if (urlData) {
+              setAvatarUrl(urlData.signedUrl);
+            }
+          }
         }
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoading(false);
+        setIsLoadingAvatar(false);
       }
-      setLoading(false);
     }
 
     fetchProfile();
@@ -68,13 +75,18 @@ export function PublicProfile() {
       <div className="md:flex md:gap-8">
         {/* Avatar - responsive positioning */}
         <div className="mb-8 md:mb-0 flex justify-center md:block md:flex-shrink-0">
-          <div style={{ width: '128px', height: '128px' }}>
-            <img
-              src={avatarUrl || `https://ui-avatars.com/api/?name=${profile?.name || 'User'}`}
-              alt="Profile"
-              className="w-full h-full rounded-full object-cover"
-            />
-          </div>
+          {isLoadingAvatar ? (
+            <ProfileImageSkeleton />
+          ) : (
+            <div style={{ width: '128px', height: '128px' }}>
+              <img
+                src={avatarUrl || `https://ui-avatars.com/api/?name=${profile?.name || 'User'}`}
+                alt="Profile"
+                className="w-full h-full rounded-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          )}
         </div>
 
         {/* Main card */}

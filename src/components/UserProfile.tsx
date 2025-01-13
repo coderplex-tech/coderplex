@@ -42,6 +42,15 @@ type ValidationErrors = {
   [K in keyof FormData]?: string;
 };
 
+// Add loading skeleton component at the top
+function ProfileImageSkeleton() {
+  return (
+    <div className="relative" style={{ width: '128px', height: '128px' }}>
+      <div className="w-full h-full rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </div>
+  );
+}
+
 export function UserProfile({ session }: UserProfileProps) {
   console.log('UserProfile rendered with session id:', session.user.id);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -63,42 +72,54 @@ export function UserProfile({ session }: UserProfileProps) {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [pendingAvatarUrl, setPendingAvatarUrl] = useState<string | null>(null);
+  const [isLoadingAvatar, setIsLoadingAvatar] = useState(true);
 
   useEffect(() => {
     fetchProfile();
   }, [session]);
 
   async function fetchProfile() {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select()
-      .eq('user_id', session.user.id)
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select()
+        .eq('user_id', session.user.id)
+        .single();
 
-    if (error) {
-      console.error('Error fetching profile:', error);
-      return;
-    }
-
-    if (data) {
-      setProfile(data);
-      setFormData({
-        name: data.name || '',
-        bio: data.bio || '',
-        skills: data.skills || '',
-        github: data.github || '',
-        linkedin: data.linkedin || '',
-        company: data.company || '',
-        website: data.website || '',
-        role: data.role || '',
-        avatar_url: data.avatar_url || ''
-      });
-
-      // Get signed URL if avatar exists
-      if (data.avatar_url) {
-        const signedUrl = await getAvatarUrl(data.avatar_url);
-        setAvatarUrl(signedUrl);
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return;
       }
+
+      if (data) {
+        setProfile(data);
+        setFormData({
+          name: data.name || '',
+          bio: data.bio || '',
+          skills: data.skills || '',
+          github: data.github || '',
+          linkedin: data.linkedin || '',
+          company: data.company || '',
+          website: data.website || '',
+          role: data.role || '',
+          avatar_url: data.avatar_url || ''
+        });
+
+        // Get signed URL if avatar exists
+        if (data.avatar_url) {
+          const { data: urlData } = await supabase.storage
+            .from('avatars')
+            .createSignedUrl(data.avatar_url, 3600);
+            
+          if (urlData) {
+            setAvatarUrl(urlData.signedUrl);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setIsLoadingAvatar(false);
     }
   }
 
@@ -269,37 +290,41 @@ export function UserProfile({ session }: UserProfileProps) {
       <div className="md:flex md:gap-8">
         {/* Avatar - responsive positioning */}
         <div className="mb-8 md:mb-0 flex justify-center md:block md:flex-shrink-0">
-          <div className="relative" style={{ width: '128px', height: '128px' }}>
-            <img
-              src={avatarUrl || `https://ui-avatars.com/api/?name=${profile?.name || 'User'}`}
-              alt="Profile"
-              className="w-full h-full rounded-full object-cover"
-            />
-            <Button
-              onClick={() => setIsPhotoDialogOpen(true)}
-              className="absolute -bottom-3 -right-3 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg transform translate-0"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-4 h-4"
+          {isLoadingAvatar ? (
+            <ProfileImageSkeleton />
+          ) : (
+            <div className="relative" style={{ width: '128px', height: '128px' }}>
+              <img
+                src={avatarUrl || `https://ui-avatars.com/api/?name=${profile?.name || 'User'}`}
+                alt="Profile"
+                className="w-full h-full rounded-full object-cover"
+              />
+              <Button
+                onClick={() => setIsPhotoDialogOpen(true)}
+                className="absolute -bottom-3 -right-3 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg transform translate-0"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
-                />
-              </svg>
-            </Button>
-          </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-4 h-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
+                  />
+                </svg>
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Main card */}

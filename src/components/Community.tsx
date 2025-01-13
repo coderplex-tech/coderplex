@@ -8,6 +8,13 @@ import { useDebounce } from '../hooks/useDebounce';
 // Store scroll position in this object outside the component
 const scrollPositions: { [key: string]: number } = {};
 
+// Create a loading skeleton component
+function ProfileImageSkeleton() {
+  return (
+    <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+  );
+}
+
 export function Community({ session }: { session: Session }) {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [filteredProfiles, setFilteredProfiles] = useState<Profile[]>([]);
@@ -17,6 +24,7 @@ export function Community({ session }: { session: Session }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isLoadingAvatars, setIsLoadingAvatars] = useState(true);
 
   // Use debounced search query
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -83,28 +91,47 @@ export function Community({ session }: { session: Session }) {
   }, []);
 
   async function fetchProfiles() {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*');
+    try {
+      // First get profiles
+      const { data: profiles, error } = await supabase
+        .from('profiles')
+        .select('*');
 
-    if (error) {
-      console.error('Error fetching profiles:', error);
-      return;
-    }
+      if (error) {
+        console.error('Error fetching profiles:', error);
+        return;
+      }
 
-    if (data) {
-      setProfiles(data);
-      // Fetch avatar URLs for all profiles
-      const urls: { [key: string]: string } = {};
-      await Promise.all(
-        data.map(async (profile) => {
-          if (profile.avatar_url) {
-            const url = await getAvatarUrl(profile.avatar_url);
-            if (url) urls[profile.user_id] = url;
+      if (profiles) {
+        setProfiles(profiles);
+        
+        // Then get avatar URLs for profiles that have avatars
+        const avatarPaths = profiles
+          .filter(p => p.avatar_url)
+          .map(p => p.avatar_url as string);
+
+        if (avatarPaths.length > 0) {
+          const { data: avatarData } = await supabase.storage
+            .from('avatars')
+            .createSignedUrls(avatarPaths, 3600);
+
+          if (avatarData) {
+            // Create a map of user_id to avatar URL
+            const urls: { [key: string]: string } = {};
+            avatarData.forEach((item) => {
+              const profile = profiles.find(p => p.avatar_url === item.path);
+              if (profile) {
+                urls[profile.user_id] = item.signedUrl;
+              }
+            });
+            setAvatarUrls(urls);
           }
-        })
-      );
-      setAvatarUrls(urls);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setIsLoadingAvatars(false);
     }
   }
 
@@ -210,11 +237,16 @@ export function Community({ session }: { session: Session }) {
             hover:-translate-y-0.5 transition-all duration-200"
           >
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-              <img
-                src={avatarUrls[profile.user_id] || `https://ui-avatars.com/api/?name=${profile.name || 'User'}`}
-                alt={profile.name || 'User'}
-                className="w-16 h-16 rounded-full object-cover flex-shrink-0"
-              />
+              {isLoadingAvatars ? (
+                <ProfileImageSkeleton />
+              ) : (
+                <img
+                  src={avatarUrls[profile.user_id] || `https://ui-avatars.com/api/?name=${profile.name || 'User'}`}
+                  alt={profile.name || 'User'}
+                  className="w-16 h-16 rounded-full object-cover flex-shrink-0"
+                  loading="lazy"
+                />
+              )}
               <div className="flex-1 min-w-0 text-center sm:text-left">
                 <div className="flex items-center justify-center sm:justify-start gap-2 sm:justify-start">
                   <h3 className="text-xl font-bold mb-1 text-gray-900 dark:text-white truncate">
