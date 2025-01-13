@@ -277,7 +277,7 @@ export function UserProfile({ session }: UserProfileProps) {
             />
             <Button
               onClick={() => setIsPhotoDialogOpen(true)}
-              className="absolute -bottom-3 -right-3 bg-pink-600 hover:bg-pink-700 text-white p-2 rounded-full shadow-lg transform translate-0"
+              className="absolute -bottom-3 -right-3 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg transform translate-0"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -328,17 +328,17 @@ export function UserProfile({ session }: UserProfileProps) {
               </div>
               <div className="space-y-2">
                 {profile?.github && (
-                  <a href={profile.github} className="block text-pink-600 dark:text-pink-400 hover:underline">
+                  <a href={profile.github} className="block text-blue-600 dark:text-blue-400 hover:underline">
                     GitHub
                   </a>
                 )}
                 {profile?.linkedin && (
-                  <a href={profile.linkedin} className="block text-pink-600 dark:text-pink-400 hover:underline">
+                  <a href={profile.linkedin} className="block text-blue-600 dark:text-blue-400 hover:underline">
                     LinkedIn
                   </a>
                 )}
                 {profile?.website && (
-                  <a href={profile.website} className="block text-pink-600 dark:text-pink-400 hover:underline">
+                  <a href={profile.website} className="block text-blue-600 dark:text-blue-400 hover:underline">
                     Website
                   </a>
                 )}

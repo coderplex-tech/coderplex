@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { SunIcon, MoonIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { supabase } from '../lib/supabase';
 import { useTheme } from '../context/ThemeContext';
@@ -22,9 +22,13 @@ export function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <span className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+              <Link 
+                to="/community" 
+                className="text-2xl font-bold text-gray-800 dark:text-gray-100 
+                hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+              >
                 coderplex
-              </span>
+              </Link>
             </div>
             <div className="hidden md:flex md:ml-24 space-x-2">
               <Button
@@ -33,7 +37,7 @@ export function Navbar() {
                 size="md"
                 className={`px-6 ${
                   location.pathname !== '/profile' &&
-                  'border border-pink-600/30 hover:border-pink-600/40 hover:bg-pink-600/5'
+                  'border border-blue-600/30 hover:border-blue-600/40 hover:bg-blue-600/5'
                 }`}
               >
                 Profile
@@ -44,7 +48,7 @@ export function Navbar() {
                 size="md"
                 className={`px-6 ${
                   location.pathname !== '/community' &&
-                  'border border-pink-600/30 hover:border-pink-600/40 hover:bg-pink-600/5'
+                  'border border-blue-600/30 hover:border-blue-600/40 hover:bg-blue-600/5'
                 }`}
               >
                 Community
@@ -91,8 +95,14 @@ export function Navbar() {
           </div>
         </div>
 
-        <div className={`${isMenuOpen ? 'block' : 'hidden'} md:hidden pb-4`}>
-          <div className="flex flex-col space-y-2">
+        <div 
+          className={`
+            transform transition-all duration-300 ease-in-out md:hidden
+            origin-top overflow-hidden
+            ${isMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}
+          `}
+        >
+          <div className="flex flex-col space-y-2 px-4 py-2">
             <Button
               to="/profile"
               variant={location.pathname === '/profile' ? 'primary' : 'ghost'}

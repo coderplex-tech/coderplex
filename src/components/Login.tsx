@@ -35,9 +35,9 @@ export function Login() {
                 colors: {
                   brand: '#2563eb',
                   brandAccent: '#3b82f6',
-                  inputText: 'black',
+                  inputText: '#111827',
                   inputBackground: 'white',
-                  inputBorder: 'lightgray',
+                  inputBorder: '#e5e7eb',
                   inputLabelText: '#374151',
                 },
                 fonts: {

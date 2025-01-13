@@ -43,7 +43,7 @@ function App() {
   return (
     <ThemeProvider>
       <Router>
-        <div className="min-h-screen flex flex-col bg-light-900 dark:bg-dark-900 transition-colors duration-200">
+        <div className="min-h-screen flex flex-col bg-gray-200 dark:bg-dark-900 transition-colors duration-200">
           <div className="relative flex flex-col min-h-screen">
             {session && <Navbar />}
             <main className={`flex-grow ${session ? 'py-8' : ''}`}>

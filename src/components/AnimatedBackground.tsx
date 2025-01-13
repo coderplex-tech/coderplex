@@ -59,8 +59,8 @@ export function AnimatedBackground() {
             const opacity = (1 - distance / maxDistance) * 0.15;
             ctx.beginPath();
             ctx.strokeStyle = isDark 
-              ? `rgba(236, 72, 153, ${opacity})` // pink in dark mode
-              : `rgba(219, 39, 119, ${opacity})`; // darker pink in light mode
+              ? `rgba(59, 130, 246, ${opacity})` // Light blue in dark mode
+              : `rgba(37, 99, 235, ${opacity})`; // Darker blue in light mode
             ctx.lineWidth = 1;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
@@ -86,8 +86,8 @@ export function AnimatedBackground() {
         // Draw particle
         const isDark = document.documentElement.classList.contains('dark');
         ctx.fillStyle = isDark 
-          ? 'rgba(236, 72, 153, 0.3)' // pink in dark mode
-          : 'rgba(219, 39, 119, 0.3)'; // darker pink in light mode
+          ? 'rgba(59, 130, 246, 0.3)' // Light blue in dark mode
+          : 'rgba(37, 99, 235, 0.3)'; // Darker blue in light mode
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         ctx.fill();
