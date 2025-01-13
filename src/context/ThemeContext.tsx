@@ -19,11 +19,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     
     // If no localStorage value, check system preference
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
+      return 'light';
     }
     
-    // Default to dark mode if no preference found
-    return 'dark';
+    // Default to light mode if no preference found
+    return 'light';
   });
 
   useEffect(() => {
