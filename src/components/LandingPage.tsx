@@ -40,23 +40,11 @@ export function LandingPage() {
         {/* Hero Section */}
         <div className="flex flex-col items-center justify-center min-h-[80vh] text-center max-w-4xl mx-auto">
           <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-12 font-mono">
-            Build your developer profile, share your journey, and connect with fellow tech enthusiasts.
+            A dedicated space for developers and other tech workers in our community to connect with each other.
           </p>
-
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 dark:text-gray-100 mb-12">
-            <span className="inline-block">
-              coderplexDev
-            </span>
-            <span className="inline-block">
-              <span className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-700">
-                Community
-              </span>
-              ()
-            </span>
-          </h1>
           
           <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-12 font-mono">
-            a space where code meets community - discover the developers behind the tech
+            Discover the developers in our community.
           </p>
 
           {/* Call to Action Buttons */}
