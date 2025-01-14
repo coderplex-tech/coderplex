@@ -77,9 +77,17 @@ export function Login() {
       <div className="flex-grow flex items-center justify-center px-4">
         <div className="w-full max-w-md bg-white/90 dark:bg-dark-800/90 backdrop-blur-sm 
         rounded-lg shadow-lg p-4 md:p-6">
-          <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center text-gray-900 dark:text-white">
-            Welcome to Coderplex
-          </h1>
+          <div className="text-center mb-6">
+            <h1 className="text-2xl md:text-3xl font-bold mb-2 text-gray-900 dark:text-white">
+              Welcome to Coderplex
+            </h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {view === 'sign_up' 
+                ? "Create an account to join our developer community"
+                : "Sign in to connect with our developer community"
+              }
+            </p>
+          </div>
           <Auth
             supabaseClient={supabase}
             view={view}
