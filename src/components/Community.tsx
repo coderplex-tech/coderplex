@@ -58,9 +58,8 @@ export function Community({ session }: { session: Session }) {
 
   // Save scroll position before navigation
   const handleProfileClick = (profileId: string, event: React.MouseEvent) => {
-    event.preventDefault();
+    // Only save scroll position, don't prevent default navigation
     scrollPositions[location.pathname] = window.scrollY;
-    navigate(profileId === session.user.id ? '/profile' : `/profile/${profileId}`);
   };
 
   // Restore scroll position
@@ -224,13 +223,15 @@ export function Community({ session }: { session: Session }) {
         </div>
       </div>
 
-      {/* Profile Grid - Update to use filteredProfiles */}
+      {/* Profile Grid - Update Link attributes */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {filteredProfiles.map(profile => (
           <Link
             key={profile.user_id}
             to={profile.user_id === session.user.id ? '/profile' : `/profile/${profile.user_id}`}
             onClick={(e) => handleProfileClick(profile.user_id, e)}
+            target="_blank"
+            rel="noopener noreferrer"
             className="block bg-white dark:bg-dark-800 rounded-lg p-4 md:p-6 
             shadow-[0_2px_8px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.2)]
             hover:shadow-[0_8px_16px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_8px_16px_rgba(0,0,0,0.3)]
