@@ -75,6 +75,8 @@ export function UserProfile({ session }: UserProfileProps) {
   const [pendingAvatarUrl, setPendingAvatarUrl] = useState<string | null>(null);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(true);
   const navigate = useNavigate();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
 
   useEffect(() => {
     fetchProfile();
@@ -288,12 +290,8 @@ export function UserProfile({ session }: UserProfileProps) {
   };
 
   const handleDeleteAccount = async () => {
-    const confirmed = window.confirm(
-      'Are you sure you want to delete your account? This action cannot be undone.'
-    );
+    if (deleteConfirmation.toLowerCase() !== 'yes') return;
     
-    if (!confirmed) return;
-
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user.id) return;
@@ -304,12 +302,12 @@ export function UserProfile({ session }: UserProfileProps) {
 
       if (error) throw error;
 
-      // Sign out after successful deletion
       await supabase.auth.signOut();
       navigate('/');
     } catch (error) {
       console.error('Error deleting account:', error);
-      // Show error message to user
+    } finally {
+      setIsDeleteDialogOpen(false);
     }
   };
 
@@ -509,14 +507,62 @@ export function UserProfile({ session }: UserProfileProps) {
         hasExistingAvatar={!!profile?.avatar_url}
       />
 
-      <Button
-        onClick={handleDeleteAccount}
-        variant="ghost"
-        size="md"
-        className="text-red-600 dark:text-red-400 border-red-200 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-900/50"
-      >
-        Delete Account
-      </Button>
+      {/* Delete Account Button - right aligned */}
+      <div className="mt-16 flex justify-end">
+        <Button
+          onClick={() => setIsDeleteDialogOpen(true)}
+          variant="ghost"
+          size="md"
+          className="border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 
+          hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
+        >
+          Delete account
+        </Button>
+      </div>
+
+      {/* Delete Account Dialog */}
+      {isDeleteDialogOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-dark-800 rounded-lg shadow-xl max-w-md w-full p-6">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              Delete Account
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
+              This action cannot be undone. Type <span className="font-semibold">yes</span> to confirm.
+            </p>
+            <input
+              type="text"
+              value={deleteConfirmation}
+              onChange={(e) => setDeleteConfirmation(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+              mb-6 bg-transparent text-gray-900 dark:text-white"
+              placeholder="Type 'yes' to confirm"
+            />
+            <div className="flex justify-end space-x-4">
+              <Button
+                onClick={() => {
+                  setIsDeleteDialogOpen(false);
+                  setDeleteConfirmation('');
+                }}
+                variant="ghost"
+                size="md"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleDeleteAccount}
+                variant="ghost"
+                size="md"
+                disabled={deleteConfirmation.toLowerCase() !== 'yes'}
+                className="border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 
+                hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Delete Account
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
