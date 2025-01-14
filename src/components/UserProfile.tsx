@@ -6,6 +6,7 @@ import { Button } from './ui/Button';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { PhotoUploadDialog } from './PhotoUploadDialog';
+import { useNavigate } from 'react-router-dom';
 
 interface UserProfileProps {
   session: Session;
@@ -73,6 +74,7 @@ export function UserProfile({ session }: UserProfileProps) {
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [pendingAvatarUrl, setPendingAvatarUrl] = useState<string | null>(null);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProfile();
@@ -285,6 +287,32 @@ export function UserProfile({ session }: UserProfileProps) {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    const confirmed = window.confirm(
+      'Are you sure you want to delete your account? This action cannot be undone.'
+    );
+    
+    if (!confirmed) return;
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user.id) return;
+
+      const { error } = await supabase.functions.invoke('delete-user', {
+        body: { user_id: session.user.id }
+      });
+
+      if (error) throw error;
+
+      // Sign out after successful deletion
+      await supabase.auth.signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      // Show error message to user
+    }
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto px-4">
       <div className="md:flex md:gap-8">
@@ -480,6 +508,15 @@ export function UserProfile({ session }: UserProfileProps) {
         }}
         hasExistingAvatar={!!profile?.avatar_url}
       />
+
+      <Button
+        onClick={handleDeleteAccount}
+        variant="ghost"
+        size="md"
+        className="text-red-600 dark:text-red-400 border-red-200 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-900/50"
+      >
+        Delete Account
+      </Button>
     </div>
   );
 }
