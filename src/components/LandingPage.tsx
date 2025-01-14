@@ -44,7 +44,7 @@ export function LandingPage() {
           </p>
           
           <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-12 font-mono">
-            Discover the developers in our community.
+            Discover the talent in our community.
           </p>
 
           {/* Call to Action Buttons */}
