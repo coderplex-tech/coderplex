@@ -10,8 +10,16 @@ export function LandingPage() {
       <div className="container mx-auto px-4 relative z-10">
         {/* Navigation */}
         <nav className="flex items-center justify-between py-6">
-          <div className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-            coderplex
+          <div className="text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-100">
+            <span className="inline-block">
+              coderplexDev
+            </span>
+            <span className="inline-block">
+              <span className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-700">
+                Community
+              </span>
+              ()
+            </span>
           </div>
           <div className="flex items-center space-x-4">
             <Button
