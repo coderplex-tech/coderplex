@@ -314,12 +314,47 @@ export function Community({ session }: { session: Session }) {
             key={profile.user_id}
             to={profile.user_id === session.user.id ? '/profile' : `/profile/${profile.user_id}`}
             onClick={(e) => handleProfileClick(profile.user_id, e)}
-            className="block bg-white dark:bg-dark-800 rounded-lg p-4 md:p-6 
+            className="block bg-white dark:bg-dark-800 rounded-lg p-4 md:p-6 relative
             shadow-[0_2px_8px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.2)]
             hover:shadow-[0_8px_16px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_8px_16px_rgba(0,0,0,0.3)]
             hover:-translate-y-0.5 transition-all duration-200"
           >
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+            {/* Follow button - Moved outside content container */}
+            {profile.user_id !== session.user.id && (
+              <Button
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleFollow(profile.user_id);
+                }}
+                variant="ghost"
+                size="sm"
+                className={`border absolute right-4 top-4 ${
+                  showSuccess[profile.user_id]
+                    ? 'border-green-200 dark:border-green-700 text-green-500 dark:text-green-400'
+                    : showError[profile.user_id]
+                    ? 'border-red-200 dark:border-red-700 text-red-500 dark:text-red-400'
+                    : following[profile.user_id]
+                    ? 'border-gray-200 dark:border-gray-700 hover:bg-red-50 hover:text-red-600 hover:border-red-200 dark:hover:bg-red-900/10 dark:hover:text-red-400 dark:hover:border-red-700'
+                    : 'border-gray-200 dark:border-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 dark:hover:bg-blue-900/10 dark:hover:text-blue-400 dark:hover:border-blue-700'
+                }`}
+                disabled={followLoading[profile.user_id] || showSuccess[profile.user_id] || showError[profile.user_id]}
+              >
+                {followLoading[profile.user_id] ? (
+                  <span className="inline-block animate-spin">⋯</span>
+                ) : showSuccess[profile.user_id] ? (
+                  <CheckIcon className="w-5 h-5 text-green-500 dark:text-green-400 animate-scale-check" />
+                ) : showError[profile.user_id] ? (
+                  <XMarkIcon className="w-5 h-5 text-red-500 dark:text-red-400 animate-scale-check" />
+                ) : following[profile.user_id] ? (
+                  <UserMinusIcon className="w-5 h-5" />
+                ) : (
+                  <UserPlusIcon className="w-5 h-5" />
+                )}
+              </Button>
+            )}
+
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 pt-8 sm:pt-0">
               {/* Avatar */}
               {isLoadingAvatars ? (
                 <ProfileImageSkeleton />
@@ -332,77 +367,39 @@ export function Community({ session }: { session: Session }) {
                 />
               )}
               {/* Content container */}
-              <div className="flex-1 min-w-0 relative w-full">
-                {/* Profile info with padding for button */}
-                <div className="text-center sm:text-left pr-14">
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white truncate">
-                    {profile.name}
-                    {profile.user_id === session.user.id && (
-                      <span className="ml-2 text-sm font-medium text-blue-600 dark:text-blue-400">(You)</span>
-                    )}
-                  </h3>
-                  {profile.role && (
-                    <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
-                      {profile.role}
-                    </p>
+              <div className="flex-1 min-w-0 text-center sm:text-left">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white truncate">
+                  {profile.name}
+                  {profile.user_id === session.user.id && (
+                    <span className="ml-2 text-sm font-medium text-blue-600 dark:text-blue-400">(You)</span>
                   )}
-                  {profile.company && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                      at {profile.company}
-                    </p>
-                  )}
-                  <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-                    {profile.bio}
+                </h3>
+                {profile.role && (
+                  <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
+                    {profile.role}
                   </p>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    <div className="flex flex-wrap justify-center sm:justify-start gap-2">
-                      {profile.skills?.split(',').slice(0, 3).map(skill => (
-                        <span 
-                          key={skill} 
-                          className="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 
-                          rounded px-2 py-1 border border-blue-100 dark:border-blue-800/30"
-                        >
-                          {skill.trim()}
-                        </span>
-                      ))}
-                    </div>
+                )}
+                {profile.company && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    at {profile.company}
+                  </p>
+                )}
+                <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
+                  {profile.bio}
+                </p>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  <div className="flex flex-wrap justify-center sm:justify-start gap-2">
+                    {profile.skills?.split(',').slice(0, 3).map(skill => (
+                      <span 
+                        key={skill} 
+                        className="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 
+                        rounded px-2 py-1 border border-blue-100 dark:border-blue-800/30"
+                      >
+                        {skill.trim()}
+                      </span>
+                    ))}
                   </div>
                 </div>
-
-                {/* Follow button */}
-                {profile.user_id !== session.user.id && (
-                  <Button
-                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleFollow(profile.user_id);
-                    }}
-                    variant="ghost"
-                    size="sm"
-                    className={`border absolute right-0 top-0 ${
-                      showSuccess[profile.user_id]
-                        ? 'border-green-200 dark:border-green-700 text-green-500 dark:text-green-400'
-                        : showError[profile.user_id]
-                        ? 'border-red-200 dark:border-red-700 text-red-500 dark:text-red-400'
-                        : following[profile.user_id]
-                        ? 'border-gray-200 dark:border-gray-700 hover:bg-red-50 hover:text-red-600 hover:border-red-200 dark:hover:bg-red-900/10 dark:hover:text-red-400 dark:hover:border-red-700'
-                        : 'border-gray-200 dark:border-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 dark:hover:bg-blue-900/10 dark:hover:text-blue-400 dark:hover:border-blue-700'
-                    }`}
-                    disabled={followLoading[profile.user_id] || showSuccess[profile.user_id] || showError[profile.user_id]}
-                  >
-                    {followLoading[profile.user_id] ? (
-                      <span className="inline-block animate-spin">⋯</span>
-                    ) : showSuccess[profile.user_id] ? (
-                      <CheckIcon className="w-5 h-5 text-green-500 dark:text-green-400 animate-scale-check" />
-                    ) : showError[profile.user_id] ? (
-                      <XMarkIcon className="w-5 h-5 text-red-500 dark:text-red-400 animate-scale-check" />
-                    ) : following[profile.user_id] ? (
-                      <UserMinusIcon className="w-5 h-5" />
-                    ) : (
-                      <UserPlusIcon className="w-5 h-5" />
-                    )}
-                  </Button>
-                )}
               </div>
             </div>
           </Link>
