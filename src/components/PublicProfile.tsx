@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Profile } from '../types';
 import { Button } from './ui/Button';
+import { UserListDialog } from './UserListDialog';
 
 function ProfileImageSkeleton() {
   return (
@@ -20,6 +21,8 @@ export function PublicProfile() {
   const [loading, setLoading] = useState(true);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(true);
   const [followLoading, setFollowLoading] = useState(false);
+  const [showFollowersDialog, setShowFollowersDialog] = useState(false);
+  const [showFollowingDialog, setShowFollowingDialog] = useState(false);
 
   useEffect(() => {
     async function fetchProfile() {
@@ -170,7 +173,30 @@ export function PublicProfile() {
                   Currently at {profile.company}
                 </p>
               )}
-              <p className="text-gray-600 dark:text-gray-300">{profile?.bio}</p>
+              <div className="flex gap-4 mt-2 text-sm">
+                <button
+                  onClick={() => setShowFollowersDialog(true)}
+                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                >
+                  <span className="font-semibold text-gray-900 dark:text-white">
+                    {profile?.followers_count || 0}
+                  </span> followers
+                  {isFollowing && (
+                    <span className="ml-1 text-blue-600 dark:text-blue-400 text-xs">
+                      • Including you
+                    </span>
+                  )}
+                </button>
+                <button
+                  onClick={() => setShowFollowingDialog(true)}
+                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                >
+                  <span className="font-semibold text-gray-900 dark:text-white">
+                    {profile?.following_count || 0}
+                  </span> following
+                </button>
+              </div>
+              <p className="text-gray-600 dark:text-gray-300 mt-4">{profile?.bio}</p>
             </div>
             
             {/* Follow Button */}
@@ -196,25 +222,6 @@ export function PublicProfile() {
                 "Follow"
               )}
             </Button>
-          </div>
-
-          {/* Follower Stats */}
-          <div className="flex gap-4 mb-6 text-sm">
-            <span className="text-gray-600 dark:text-gray-400">
-              <span className="font-semibold text-gray-900 dark:text-white">
-                {profile?.followers_count || 0}
-              </span> followers
-              {isFollowing && (
-                <span className="ml-1 text-blue-600 dark:text-blue-400 text-xs">
-                  • Including you
-                </span>
-              )}
-            </span>
-            <span className="text-gray-600 dark:text-gray-400">
-              <span className="font-semibold text-gray-900 dark:text-white">
-                {profile?.following_count || 0}
-              </span> following
-            </span>
           </div>
 
           <div className="mb-6">
@@ -255,6 +262,22 @@ export function PublicProfile() {
           </div>
         </div>
       </div>
+
+      <UserListDialog
+        isOpen={showFollowersDialog}
+        onClose={() => setShowFollowersDialog(false)}
+        userId={id!}
+        type="followers"
+        title="Followers"
+      />
+
+      <UserListDialog
+        isOpen={showFollowingDialog}
+        onClose={() => setShowFollowingDialog(false)}
+        userId={id!}
+        type="following"
+        title="Following"
+      />
     </div>
   );
 } 

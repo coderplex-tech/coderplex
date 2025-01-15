@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { PhotoUploadDialog } from './PhotoUploadDialog';
 import { useNavigate } from 'react-router-dom';
+import { UserListDialog } from './UserListDialog';
 
 interface UserProfileProps {
   session: Session;
@@ -77,6 +78,8 @@ export function UserProfile({ session }: UserProfileProps) {
   const navigate = useNavigate();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const [showFollowersDialog, setShowFollowersDialog] = useState(false);
+  const [showFollowingDialog, setShowFollowingDialog] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -157,14 +160,16 @@ export function UserProfile({ session }: UserProfileProps) {
       const profileData: Profile = {
         ...validatedData,
         user_id: session.user.id,
+        followers_count: profile?.followers_count || 0,
+        following_count: profile?.following_count || 0,
+        avatar_url: pendingAvatarUrl || profile?.avatar_url || null,
         bio: validatedData.bio || null,
-        skills: validatedData.skills || null,
         github: validatedData.github || null,
         linkedin: validatedData.linkedin || null,
         company: validatedData.company || null,
         website: validatedData.website || null,
         role: validatedData.role || null,
-        avatar_url: pendingAvatarUrl || profile?.avatar_url || null
+        skills: validatedData.skills || null
       };
 
       setProfile(profileData);
@@ -371,7 +376,25 @@ export function UserProfile({ session }: UserProfileProps) {
                     Currently at {profile.company}
                   </p>
                 )}
-                <p className="text-gray-600 dark:text-gray-300">{profile?.bio || 'No bio yet'}</p>
+                <div className="flex gap-4 mt-2 text-sm">
+                  <button
+                    onClick={() => setShowFollowersDialog(true)}
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                  >
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      {profile?.followers_count || 0}
+                    </span> followers
+                  </button>
+                  <button
+                    onClick={() => setShowFollowingDialog(true)}
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                  >
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      {profile?.following_count || 0}
+                    </span> following
+                  </button>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300 mt-4">{profile?.bio || 'No bio yet'}</p>
               </div>
               <div className="mb-6">
                 <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Skills</h3>
@@ -581,6 +604,22 @@ export function UserProfile({ session }: UserProfileProps) {
           </div>
         </div>
       )}
+
+      <UserListDialog
+        isOpen={showFollowersDialog}
+        onClose={() => setShowFollowersDialog(false)}
+        userId={session.user.id}
+        type="followers"
+        title="Followers"
+      />
+
+      <UserListDialog
+        isOpen={showFollowingDialog}
+        onClose={() => setShowFollowingDialog(false)}
+        userId={session.user.id}
+        type="following"
+        title="Following"
+      />
     </div>
   );
 }
