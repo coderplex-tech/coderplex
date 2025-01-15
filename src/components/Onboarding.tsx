@@ -51,24 +51,31 @@ export function Onboarding() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('No session');
 
+      const updateData = {
+        name: formData.name,
+        role: formData.role,
+        employment_status: formData.employment_status,
+        looking_for_work: formData.looking_for_work,
+        company: formData.company || null,
+        bio: formData.bio || null,
+        skills: formData.skills || null,
+        github: formData.github || null,
+        linkedin: formData.linkedin || null,
+        website: formData.website || null,
+        onboarding_completed: true,
+      };
+
+      console.log('Sending data to Supabase:', updateData);
+
       const { error } = await supabase
         .from('profiles')
-        .update({
-          name: formData.name,
-          role: formData.role,
-          employment_status: formData.employment_status,
-          looking_for_work: formData.looking_for_work,
-          company: formData.company || null,
-          bio: formData.bio || null,
-          skills: formData.skills || null,
-          github: formData.github || null,
-          linkedin: formData.linkedin || null,
-          website: formData.website || null,
-          onboarding_completed: true,
-        })
+        .update(updateData)
         .eq('user_id', session.user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
       navigate('/community');
     } catch (error) {
       console.error('Error:', error);
