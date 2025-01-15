@@ -16,18 +16,14 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
         setSession(session);
         
         if (session) {
-          // Check onboarding status
+          // First check if profile exists at all
           const { data, error } = await supabase
             .from('profiles')
             .select('onboarding_completed')
             .eq('user_id', session.user.id)
-            .maybeSingle();  // Use maybeSingle() instead of single()
+            .maybeSingle();
 
-          if (error) {
-            console.error('Error checking onboarding status:', error);
-            return;
-          }
-
+          // If no profile or error, assume onboarding is not completed
           setOnboardingCompleted(data?.onboarding_completed ?? false);
         }
         setLoading(false);
