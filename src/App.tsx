@@ -75,7 +75,14 @@ function AppContent() {
             {session ? (
               <>
                 <Route path="/profile" element={<UserProfile session={session} />} />
-                <Route path="/community" element={<Community session={session} />} />
+                <Route 
+                  path="/community" 
+                  element={
+                    <ProtectedRoute>
+                      <Community session={session} />
+                    </ProtectedRoute>
+                  } 
+                />
                 <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
                 <Route path="/" element={<Navigate to="/community" replace />} />
                 <Route path="*" element={<Navigate to="/community" replace />} />
