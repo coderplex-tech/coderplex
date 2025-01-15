@@ -40,11 +40,7 @@ export function LandingPage() {
         {/* Hero Section */}
         <div className="flex flex-col items-center justify-center min-h-[80vh] text-center max-w-4xl mx-auto">
           <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-12 font-mono">
-            A dedicated space for developers and other tech workers in our community to connect with each other.
-          </p>
-          
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-12 font-mono">
-            Discover the talent in our community.
+            A digital community for passionate software developers
           </p>
 
           {/* Call to Action Buttons */}
@@ -55,7 +51,7 @@ export function LandingPage() {
               size="lg"
               className="hover:scale-105 transition-transform duration-300"
             >
-              Join Now →
+              Join Us →
             </Button>
             <Button
               to="/login?auth-view=sign_in"
