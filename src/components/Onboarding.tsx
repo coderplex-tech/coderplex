@@ -6,8 +6,8 @@ import { Button } from './ui/Button';
 interface OnboardingFormData {
   name: string;
   role: string;
-  employmentStatus?: 'employed' | 'unemployed' | 'student';
-  lookingForWork?: boolean;
+  employment_status: 'employed' | 'unemployed' | 'student';
+  looking_for_work: boolean;
   company?: string;
   bio?: string;
   skills?: string;
@@ -22,8 +22,8 @@ export function Onboarding() {
   const [formData, setFormData] = useState<OnboardingFormData>({
     name: '',
     role: '',
-    employmentStatus: 'employed',
-    lookingForWork: false,
+    employment_status: 'employed',
+    looking_for_work: false,
     company: '',
     bio: '',
     skills: '',
@@ -56,8 +56,8 @@ export function Onboarding() {
         .update({
           name: formData.name,
           role: formData.role,
-          employment_status: formData.employmentStatus,
-          looking_for_work: formData.lookingForWork,
+          employment_status: formData.employment_status,
+          looking_for_work: formData.looking_for_work,
           company: formData.company || null,
           bio: formData.bio || null,
           skills: formData.skills || null,
@@ -133,8 +133,8 @@ export function Onboarding() {
                     What's your current status?
                   </label>
                   <select
-                    value={formData.employmentStatus}
-                    onChange={(e) => updateFormData('employmentStatus', e.target.value)}
+                    value={formData.employment_status}
+                    onChange={(e) => updateFormData('employment_status', e.target.value)}
                     className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-700
                       bg-white dark:bg-dark-900 px-3 py-2 text-gray-900 dark:text-white
                       focus:border-blue-500 focus:ring-blue-500"
@@ -145,7 +145,7 @@ export function Onboarding() {
                   </select>
                 </div>
 
-                {formData.employmentStatus === 'employed' && (
+                {formData.employment_status === 'employed' && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Where do you work?
@@ -165,8 +165,8 @@ export function Onboarding() {
                   <label className="flex items-center">
                     <input
                       type="checkbox"
-                      checked={formData.lookingForWork}
-                      onChange={(e) => updateFormData('lookingForWork', e.target.checked)}
+                      checked={formData.looking_for_work}
+                      onChange={(e) => updateFormData('looking_for_work', e.target.checked)}
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
