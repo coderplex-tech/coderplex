@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Profile } from '../types';
+import { Button } from './ui/Button';
 
 function ProfileImageSkeleton() {
   return (
@@ -15,8 +16,10 @@ export function PublicProfile() {
   const { id } = useParams();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isLoadingAvatar, setIsLoadingAvatar] = useState(true);
+  const [followLoading, setFollowLoading] = useState(false);
 
   useEffect(() => {
     async function fetchProfile() {
@@ -53,6 +56,67 @@ export function PublicProfile() {
 
     fetchProfile();
   }, [id]);
+
+  // Check if current user is following this profile
+  useEffect(() => {
+    async function checkFollowStatus() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session && id) {
+        const { data } = await supabase
+          .from('follows')
+          .select()
+          .eq('follower_id', session.user.id)
+          .eq('following_id', id)
+          .single();
+        
+        setIsFollowing(!!data);
+      }
+    }
+    checkFollowStatus();
+  }, [id]);
+
+  const handleFollow = async () => {
+    setFollowLoading(true);
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session || !id) return;
+
+    try {
+      if (isFollowing) {
+        const { error } = await supabase
+          .from('follows')
+          .delete()
+          .eq('follower_id', session.user.id)
+          .eq('following_id', id);
+
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('follows')
+          .insert([
+            { follower_id: session.user.id, following_id: id }
+          ]);
+
+        if (error) throw error;
+      }
+
+      // Fetch updated profile data after successful follow/unfollow
+      const { data: updatedProfile, error: profileError } = await supabase
+        .from('profiles')
+        .select()
+        .eq('user_id', id)
+        .single();
+
+      if (profileError) throw profileError;
+
+      setProfile(updatedProfile);
+      setIsFollowing(!isFollowing);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setFollowLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -91,22 +155,68 @@ export function PublicProfile() {
 
         {/* Main card */}
         <div className="flex-grow bg-white dark:bg-dark-800 rounded-lg shadow p-4 md:p-6 transition-colors duration-200">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {profile?.name}
-            </h2>
-            {profile?.role && (
-              <p className="text-gray-600 dark:text-gray-300 mb-2">
-                {profile.role}
-              </p>
-            )}
-            {profile?.company && (
-              <p className="text-gray-600 dark:text-gray-300 mb-2">
-                Currently at {profile.company}
-              </p>
-            )}
-            <p className="text-gray-600 dark:text-gray-300">{profile?.bio}</p>
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                {profile?.name}
+              </h2>
+              {profile?.role && (
+                <p className="text-gray-600 dark:text-gray-300 mb-2">
+                  {profile.role}
+                </p>
+              )}
+              {profile?.company && (
+                <p className="text-gray-600 dark:text-gray-300 mb-2">
+                  Currently at {profile.company}
+                </p>
+              )}
+              <p className="text-gray-600 dark:text-gray-300">{profile?.bio}</p>
+            </div>
+            
+            {/* Follow Button */}
+            <Button
+              onClick={handleFollow}
+              variant={isFollowing ? "ghost" : "primary"}
+              size="md"
+              className={`min-w-[100px] group ${
+                isFollowing 
+                  ? 'border border-gray-200 dark:border-gray-700 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/10 dark:hover:text-red-400' 
+                  : ''
+              }`}
+              disabled={followLoading}
+            >
+              {followLoading ? (
+                <span className="inline-block animate-spin">⋯</span>
+              ) : isFollowing ? (
+                <>
+                  <span className="block group-hover:hidden">Following</span>
+                  <span className="hidden group-hover:block">Unfollow</span>
+                </>
+              ) : (
+                "Follow"
+              )}
+            </Button>
           </div>
+
+          {/* Follower Stats */}
+          <div className="flex gap-4 mb-6 text-sm">
+            <span className="text-gray-600 dark:text-gray-400">
+              <span className="font-semibold text-gray-900 dark:text-white">
+                {profile?.followers_count || 0}
+              </span> followers
+              {isFollowing && (
+                <span className="ml-1 text-blue-600 dark:text-blue-400 text-xs">
+                  • Including you
+                </span>
+              )}
+            </span>
+            <span className="text-gray-600 dark:text-gray-400">
+              <span className="font-semibold text-gray-900 dark:text-white">
+                {profile?.following_count || 0}
+              </span> following
+            </span>
+          </div>
+
           <div className="mb-6">
             <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">Skills</h3>
             <p className="text-gray-600 dark:text-gray-300">{profile?.skills}</p>

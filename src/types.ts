@@ -10,6 +10,9 @@ export interface Profile {
   role: string | null;
   avatar_url: string | null;
   updated_at?: string;
+  followers_count: number;
+  following_count: number;
+  is_following?: boolean;
 }
 
 export interface FormData {
