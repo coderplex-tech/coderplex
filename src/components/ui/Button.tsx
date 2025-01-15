@@ -6,7 +6,7 @@ interface ButtonProps {
   variant?: 'primary' | 'secondary' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   to?: string;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
   disabled?: boolean;
   type?: 'button' | 'submit' | 'reset';
@@ -41,11 +41,11 @@ export function Button({
     disabled ? 'opacity-50 cursor-not-allowed' : ''
   } ${className}`;
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     if (disabled) return;
     if (onClick) {
-      e.preventDefault(); // Prevent default navigation
-      onClick();
+      e.preventDefault();
+      onClick(e as React.MouseEvent<HTMLButtonElement>);
     }
     if (to && !onClick) {
       navigate(to);

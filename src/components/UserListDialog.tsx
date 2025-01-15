@@ -136,8 +136,8 @@ export function UserListDialog({ isOpen, onClose, userId, type, title }: UserLis
               {users.map((user) => (
                 <Link
                   key={user.user_id}
-                  to={user.user_id === currentUserId ? '/profile' : `/profile/${user.user_id}`}
-                  target="_blank"
+                  to={`/profile/${user.user_id}`}
+                  onClick={() => onClose()}
                   className="flex items-center gap-3 p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200"
                 >
                   <img
@@ -146,13 +146,8 @@ export function UserListDialog({ isOpen, onClose, userId, type, title }: UserLis
                     className="w-10 h-10 rounded-full object-cover"
                   />
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                    <p className="font-medium text-gray-900 dark:text-white">
                       {user.name}
-                      {user.user_id === currentUserId && (
-                        <span className="text-xs text-blue-600 dark:text-blue-400 font-normal">
-                          (You)
-                        </span>
-                      )}
                     </p>
                     {user.role && (
                       <p className="text-sm text-gray-500 dark:text-gray-400">

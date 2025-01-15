@@ -4,6 +4,8 @@ import { Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { Profile } from '../types';
 import { useDebounce } from '../hooks/useDebounce';
+import { Button } from './ui/Button';
+import { UserPlusIcon, UserMinusIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 // Store scroll position in this object outside the component
 const scrollPositions: { [key: string]: number } = {};
@@ -25,6 +27,11 @@ export function Community({ session }: { session: Session }) {
   const navigate = useNavigate();
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isLoadingAvatars, setIsLoadingAvatars] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [followLoading, setFollowLoading] = useState<{ [key: string]: boolean }>({});
+  const [following, setFollowing] = useState<{ [key: string]: boolean }>({});
+  const [showSuccess, setShowSuccess] = useState<{ [key: string]: boolean }>({});
+  const [showError, setShowError] = useState<{ [key: string]: boolean }>({});
 
   // Use debounced search query
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -157,6 +164,82 @@ export function Community({ session }: { session: Session }) {
     });
   };
 
+  // Add this effect to check who the current user is following
+  useEffect(() => {
+    async function checkFollowStatus() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { data } = await supabase
+          .from('follows')
+          .select('following_id')
+          .eq('follower_id', session.user.id);
+        
+        const followingMap: { [key: string]: boolean } = {};
+        data?.forEach(follow => {
+          followingMap[follow.following_id] = true;
+        });
+        setFollowing(followingMap);
+      }
+    }
+    checkFollowStatus();
+  }, []);
+
+  const handleFollow = async (userId: string) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    setFollowLoading(prev => ({ ...prev, [userId]: true }));
+
+    try {
+      if (following[userId]) {
+        // Unfollow
+        await supabase
+          .from('follows')
+          .delete()
+          .eq('follower_id', session.user.id)
+          .eq('following_id', userId);
+        
+        setFollowing(prev => ({ ...prev, [userId]: false }));
+        // Show error animation
+        setShowError(prev => ({ ...prev, [userId]: true }));
+        setTimeout(() => {
+          setShowError(prev => ({ ...prev, [userId]: false }));
+        }, 1000);
+      } else {
+        // Follow
+        await supabase
+          .from('follows')
+          .insert([{ follower_id: session.user.id, following_id: userId }]);
+        
+        setFollowing(prev => ({ ...prev, [userId]: true }));
+        // Show success animation
+        setShowSuccess(prev => ({ ...prev, [userId]: true }));
+        setTimeout(() => {
+          setShowSuccess(prev => ({ ...prev, [userId]: false }));
+        }, 1000);
+      }
+
+      // Update the profile's follower count in the UI
+      setProfiles(prevProfiles => 
+        prevProfiles.map(profile => {
+          if (profile.user_id === userId) {
+            return {
+              ...profile,
+              followers_count: following[userId] 
+                ? profile.followers_count - 1 
+                : profile.followers_count + 1
+            };
+          }
+          return profile;
+        })
+      );
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setFollowLoading(prev => ({ ...prev, [userId]: false }));
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 max-w-7xl">
       {/* Search Bar */}
@@ -237,6 +320,7 @@ export function Community({ session }: { session: Session }) {
             hover:-translate-y-0.5 transition-all duration-200"
           >
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+              {/* Avatar */}
               {isLoadingAvatars ? (
                 <ProfileImageSkeleton />
               ) : (
@@ -247,41 +331,78 @@ export function Community({ session }: { session: Session }) {
                   loading="lazy"
                 />
               )}
-              <div className="flex-1 min-w-0 text-center sm:text-left">
-                <div className="flex items-center justify-center sm:justify-start gap-2 sm:justify-start">
-                  <h3 className="text-xl font-bold mb-1 text-gray-900 dark:text-white truncate">
+              {/* Content container */}
+              <div className="flex-1 min-w-0 relative w-full">
+                {/* Profile info with padding for button */}
+                <div className="text-center sm:text-left pr-14">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white truncate">
                     {profile.name}
+                    {profile.user_id === session.user.id && (
+                      <span className="ml-2 text-sm font-medium text-blue-600 dark:text-blue-400">(You)</span>
+                    )}
                   </h3>
-                  {profile.user_id === session.user.id && (
-                    <span className="text-sm font-medium text-blue-600 dark:text-blue-400">(You)</span>
+                  {profile.role && (
+                    <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
+                      {profile.role}
+                    </p>
                   )}
-                </div>
-                {profile.role && (
-                  <p className="text-sm text-blue-600 dark:text-blue-400 mb-1">
-                    {profile.role}
+                  {profile.company && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      at {profile.company}
+                    </p>
+                  )}
+                  <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
+                    {profile.bio}
                   </p>
-                )}
-                {profile.company && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    at {profile.company}
-                  </p>
-                )}
-                <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-                  {profile.bio}
-                </p>
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  <div className="flex flex-wrap justify-center sm:justify-start gap-2">
-                    {profile.skills?.split(',').slice(0, 3).map(skill => (
-                      <span 
-                        key={skill} 
-                        className="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 
-                        rounded px-2 py-1 border border-blue-100 dark:border-blue-800/30"
-                      >
-                        {skill.trim()}
-                      </span>
-                    ))}
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    <div className="flex flex-wrap justify-center sm:justify-start gap-2">
+                      {profile.skills?.split(',').slice(0, 3).map(skill => (
+                        <span 
+                          key={skill} 
+                          className="inline-block bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 
+                          rounded px-2 py-1 border border-blue-100 dark:border-blue-800/30"
+                        >
+                          {skill.trim()}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
+
+                {/* Follow button */}
+                {profile.user_id !== session.user.id && (
+                  <Button
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleFollow(profile.user_id);
+                    }}
+                    variant="ghost"
+                    size="sm"
+                    className={`border absolute right-0 top-0 ${
+                      showSuccess[profile.user_id]
+                        ? 'border-green-200 dark:border-green-700 text-green-500 dark:text-green-400'
+                        : showError[profile.user_id]
+                        ? 'border-red-200 dark:border-red-700 text-red-500 dark:text-red-400'
+                        : following[profile.user_id]
+                        ? 'border-gray-200 dark:border-gray-700 hover:bg-red-50 hover:text-red-600 hover:border-red-200 dark:hover:bg-red-900/10 dark:hover:text-red-400 dark:hover:border-red-700'
+                        : 'border-gray-200 dark:border-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 dark:hover:bg-blue-900/10 dark:hover:text-blue-400 dark:hover:border-blue-700'
+                    }`}
+                    disabled={followLoading[profile.user_id] || showSuccess[profile.user_id] || showError[profile.user_id]}
+                  >
+                    {followLoading[profile.user_id] ? (
+                      <span className="inline-block animate-spin">⋯</span>
+                    ) : showSuccess[profile.user_id] ? (
+                      <CheckIcon className="w-5 h-5 text-green-500 dark:text-green-400 animate-scale-check" />
+                    ) : showError[profile.user_id] ? (
+                      <XMarkIcon className="w-5 h-5 text-red-500 dark:text-red-400 animate-scale-check" />
+                    ) : following[profile.user_id] ? (
+                      <UserMinusIcon className="w-5 h-5" />
+                    ) : (
+                      <UserPlusIcon className="w-5 h-5" />
+                    )}
+                  </Button>
+                )}
               </div>
             </div>
           </Link>

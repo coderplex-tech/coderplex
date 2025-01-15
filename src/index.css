@@ -81,3 +81,13 @@ body {
   padding-left: 0.5rem !important;
   padding-right: 0.5rem !important;
 }
+
+@keyframes scale-check {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-scale-check {
+  animation: scale-check 0.3s ease-out forwards;
+}
