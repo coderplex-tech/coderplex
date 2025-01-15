@@ -70,17 +70,21 @@ export function Onboarding() {
 
       console.log('Sending data to Supabase:', updateData);
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .update(updateData)
-        .eq('user_id', session.user.id);
+        .eq('user_id', session.user.id)
+        .select()
+        .single();
 
       if (error) {
         console.error('Update error:', error);
         throw error;
       }
 
-      navigate('/community');
+      console.log('Profile updated successfully:', data);
+      await supabase.auth.refreshSession();
+      navigate('/community', { replace: true });
     } catch (error) {
       console.error('Error:', error);
     } finally {
