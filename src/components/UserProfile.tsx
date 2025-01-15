@@ -514,7 +514,8 @@ export function UserProfile({ session }: UserProfileProps) {
           variant="ghost"
           size="md"
           className="border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 
-          hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
+          hover:bg-red-600 hover:text-white dark:hover:bg-red-600 dark:hover:text-white
+          hover:border-red-600 dark:hover:border-red-600 transition-colors duration-200"
         >
           Delete account
         </Button>
@@ -555,7 +556,9 @@ export function UserProfile({ session }: UserProfileProps) {
                 size="md"
                 disabled={deleteConfirmation.toLowerCase() !== 'yes'}
                 className="border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 
-                hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                hover:bg-red-600 hover:text-white dark:hover:bg-red-600 dark:hover:text-white
+                hover:border-red-600 dark:hover:border-red-600 transition-colors duration-200
+                disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Delete Account
               </Button>
