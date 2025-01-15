@@ -53,17 +53,17 @@ export function UserListDialog({ isOpen, onClose, userId, type, title }: UserLis
           .from('follows')
           .select(`
             ${type === 'followers' 
-              ? 'profiles!follows_follower_id_fkey(user_id, name, role, avatar_url, bio, skills, github, linkedin, company, website, followers_count, following_count)' 
-              : 'profiles!follows_following_id_fkey(user_id, name, role, avatar_url, bio, skills, github, linkedin, company, website, followers_count, following_count)'
+              ? 'follower:profiles!follows_follower_id_fkey(*)' 
+              : 'following:profiles!follows_following_id_fkey(*)'
             }
           `)
           .eq(type === 'followers' ? 'following_id' : 'follower_id', userId);
 
         if (error) throw error;
 
-        // Extract the nested profile data
+        // Extract the nested profile data correctly
         const profiles = data.map((item: any) => 
-          type === 'followers' ? item.profiles : item.profiles
+          type === 'followers' ? item.follower : item.following
         );
         setUsers(profiles);
       } catch (error) {
@@ -136,7 +136,7 @@ export function UserListDialog({ isOpen, onClose, userId, type, title }: UserLis
               {users.map((user) => (
                 <Link
                   key={user.user_id}
-                  to={`/profile/${user.user_id}`}
+                  to={user.user_id === currentUserId ? '/profile' : `/profile/${user.user_id}`}
                   onClick={() => onClose()}
                   className="flex items-center gap-3 p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200"
                 >
@@ -148,6 +148,9 @@ export function UserListDialog({ isOpen, onClose, userId, type, title }: UserLis
                   <div>
                     <p className="font-medium text-gray-900 dark:text-white">
                       {user.name}
+                      {user.user_id === currentUserId && (
+                        <span className="ml-2 text-sm text-blue-600 dark:text-blue-400">(You)</span>
+                      )}
                     </p>
                     {user.role && (
                       <p className="text-sm text-gray-500 dark:text-gray-400">
