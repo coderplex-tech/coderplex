@@ -10,6 +10,8 @@ import { Footer } from './components/Footer';
 import { ThemeProvider } from './context/ThemeContext';
 import { supabase } from './lib/supabase';
 import { PublicProfile } from './components/PublicProfile';
+import { Onboarding } from './components/Onboarding';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -63,6 +65,14 @@ function App() {
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </>
                 )}
+                <Route 
+                  path="/onboarding" 
+                  element={
+                    <ProtectedRoute>
+                      <Onboarding />
+                    </ProtectedRoute>
+                  } 
+                />
               </Routes>
             </main>
             <Footer />

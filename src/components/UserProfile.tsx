@@ -169,7 +169,10 @@ export function UserProfile({ session }: UserProfileProps) {
         company: validatedData.company || null,
         website: validatedData.website || null,
         role: validatedData.role || null,
-        skills: validatedData.skills || null
+        skills: validatedData.skills || null,
+        employment_status: profile?.employment_status || 'employed',
+        looking_for_work: profile?.looking_for_work || false,
+        onboarding_completed: profile?.onboarding_completed || false
       };
 
       setProfile(profileData);
