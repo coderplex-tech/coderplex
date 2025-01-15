@@ -75,3 +75,9 @@ body {
 .auth-divider {
   @apply bg-gray-200 dark:bg-gray-700 !important;
 }
+
+/* Add this to your existing styles */
+.menu-item {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}

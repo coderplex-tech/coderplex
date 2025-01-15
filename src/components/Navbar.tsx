@@ -148,18 +148,18 @@ export function Navbar({ isPublic, onSearchClick, isSearchVisible }: NavbarProps
                 {/* Profile Dropdown Menu */}
                 <div
                   className={`
-                    absolute right-0 mt-2 w-48 rounded-md shadow-lg 
+                    absolute right-0 mt-2 w-32 rounded-md shadow-lg 
                     bg-white dark:bg-dark-800 ring-1 ring-black ring-opacity-5
                     transform transition-all duration-200 ease-in-out origin-top-right
                     ${isProfileMenuOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'}
                   `}
                 >
-                  <div className="py-1">
+                  <div className="py-0.5">
                     <Button
                       to="/profile"
                       variant="ghost"
                       size="md"
-                      className="w-full justify-start px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="w-full justify-start text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 menu-item"
                     >
                       My Profile
                     </Button>
@@ -167,7 +167,7 @@ export function Navbar({ isPublic, onSearchClick, isSearchVisible }: NavbarProps
                       onClick={handleSignOut}
                       variant="ghost"
                       size="md"
-                      className="w-full justify-start px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="w-full justify-start text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 menu-item"
                     >
                       Sign Out
                     </Button>
@@ -218,7 +218,7 @@ export function Navbar({ isPublic, onSearchClick, isSearchVisible }: NavbarProps
                   to="/profile"
                   variant="ghost"
                   size="md"
-                  className="w-full justify-start px-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  className="w-full justify-start !px-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   View Profile
                 </Button>
