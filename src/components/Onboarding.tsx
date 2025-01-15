@@ -42,49 +42,42 @@ export function Onboarding() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.role) {
-      return;
-    }
+    if (!formData.name || !formData.role) return;
 
     setLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('No session');
 
-      const updateData = {
+      // First, check if profile exists
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .single();
+
+      console.log('Existing profile:', existingProfile);  // Add this for debugging
+
+      const profileData = {
         name: formData.name,
         role: formData.role,
         employment_status: formData.employment_status,
         looking_for_work: formData.looking_for_work,
-        company: formData.company || null,
-        bio: formData.bio || null,
-        skills: formData.skills || null,
-        github: formData.github || null,
-        linkedin: formData.linkedin || null,
-        website: formData.website || null,
         onboarding_completed: true,
-        followers_count: 0,
-        following_count: 0,
-        avatar_url: null,
+        // Add all required fields with proper types
+        followers_count: existingProfile?.followers_count ?? 0,
+        following_count: existingProfile?.following_count ?? 0,
       };
 
-      console.log('Sending data to Supabase:', updateData);
+      console.log('Updating with:', profileData);  // Add this for debugging
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('profiles')
-        .update(updateData)
-        .eq('user_id', session.user.id)
-        .select()
-        .single();
+        .update(profileData)
+        .eq('user_id', session.user.id);
 
-      if (error) {
-        console.error('Update error:', error);
-        throw error;
-      }
-
-      console.log('Profile updated successfully:', data);
-      await supabase.auth.refreshSession();
-      navigate('/community', { replace: true });
+      if (error) throw error;
+      navigate('/community');
     } catch (error) {
       console.error('Error:', error);
     } finally {
