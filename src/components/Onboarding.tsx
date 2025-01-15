@@ -52,7 +52,6 @@ export function Onboarding() {
       if (!session) throw new Error('No session');
 
       const updateData = {
-        user_id: session.user.id,
         name: formData.name,
         role: formData.role,
         employment_status: formData.employment_status,
@@ -68,21 +67,14 @@ export function Onboarding() {
 
       console.log('Sending data to Supabase:', updateData);
 
-      const { error: insertError } = await supabase
+      const { error } = await supabase
         .from('profiles')
-        .insert(updateData);
+        .update(updateData)
+        .eq('user_id', session.user.id);
 
-      if (insertError) {
-        console.log('Insert failed, trying update:', insertError);
-        const { error: updateError } = await supabase
-          .from('profiles')
-          .update(updateData)
-          .eq('user_id', session.user.id);
-
-        if (updateError) {
-          console.error('Update error:', updateError);
-          throw updateError;
-        }
+      if (error) {
+        console.error('Update error:', error);
+        throw error;
       }
 
       navigate('/community');
