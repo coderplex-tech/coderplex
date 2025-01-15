@@ -56,20 +56,25 @@ export function Onboarding() {
         .eq('user_id', session.user.id)
         .single();
 
-      console.log('Existing profile:', existingProfile);  // Add this for debugging
+      console.log('Existing profile:', existingProfile);
 
       const profileData = {
         name: formData.name,
         role: formData.role,
         employment_status: formData.employment_status,
         looking_for_work: formData.looking_for_work,
+        company: formData.company || null,
+        bio: formData.bio || null,
+        skills: formData.skills || null,
+        github: formData.github || null,
+        linkedin: formData.linkedin || null,
+        website: formData.website || null,
         onboarding_completed: true,
-        // Add all required fields with proper types
         followers_count: existingProfile?.followers_count ?? 0,
         following_count: existingProfile?.following_count ?? 0,
       };
 
-      console.log('Updating with:', profileData);  // Add this for debugging
+      console.log('Updating with:', profileData);
 
       const { error } = await supabase
         .from('profiles')
@@ -77,7 +82,10 @@ export function Onboarding() {
         .eq('user_id', session.user.id);
 
       if (error) throw error;
-      navigate('/community');
+
+      // Refresh session and use replace navigation
+      await supabase.auth.refreshSession();
+      navigate('/community', { replace: true });
     } catch (error) {
       console.error('Error:', error);
     } finally {
