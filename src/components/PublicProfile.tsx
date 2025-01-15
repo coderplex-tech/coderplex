@@ -113,17 +113,32 @@ export function PublicProfile() {
           </div>
           <div className="space-y-2">
             {profile?.github && (
-              <a href={profile.github} className="block text-blue-600 dark:text-blue-400 hover:underline">
+              <a 
+                href={profile.github} 
+                className="block text-blue-600 dark:text-blue-400 hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 GitHub
               </a>
             )}
             {profile?.linkedin && (
-              <a href={profile.linkedin} className="block text-blue-600 dark:text-blue-400 hover:underline">
+              <a 
+                href={profile.linkedin} 
+                className="block text-blue-600 dark:text-blue-400 hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 LinkedIn
               </a>
             )}
             {profile?.website && (
-              <a href={profile.website} className="block text-blue-600 dark:text-blue-400 hover:underline">
+              <a 
+                href={profile.website} 
+                className="block text-blue-600 dark:text-blue-400 hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Website
               </a>
             )}
