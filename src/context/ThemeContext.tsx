@@ -31,6 +31,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('theme', theme);
     document.documentElement.classList.remove('light', 'dark');
     document.documentElement.classList.add(theme);
+
+    // Update favicon based on theme
+    const favicon = document.querySelector('link[rel="icon"]');
+    if (favicon) {
+      favicon.setAttribute('href', theme === 'dark' ? '/coderplex-dark.ico' : '/coderplex-light.ico');
+    }
   }, [theme]);
 
   // Listen for system theme changes
