@@ -63,6 +63,9 @@ export function Onboarding() {
         linkedin: formData.linkedin || null,
         website: formData.website || null,
         onboarding_completed: true,
+        followers_count: 0,
+        following_count: 0,
+        avatar_url: null,
       };
 
       console.log('Sending data to Supabase:', updateData);
