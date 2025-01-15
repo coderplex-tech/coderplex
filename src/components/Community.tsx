@@ -60,7 +60,7 @@ export function Community({ session }: { session: Session }) {
   const handleProfileClick = (profileId: string, event: React.MouseEvent) => {
     event.preventDefault();
     scrollPositions[location.pathname] = window.scrollY;
-    navigate(profileId === session.user.id ? '/profile' : `/profile/${profile.user_id}`);
+    navigate(profileId === session.user.id ? '/profile' : `/profile/${profileId}`);
   };
 
   // Restore scroll position
