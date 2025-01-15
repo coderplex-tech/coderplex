@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Button } from './ui/Button';
@@ -32,6 +32,10 @@ export function Onboarding() {
     linkedin: '',
     website: '',
   });
+
+  useEffect(() => {
+    console.log('Onboarding component mounted');
+  }, []);
 
   const updateFormData = (field: keyof OnboardingFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));

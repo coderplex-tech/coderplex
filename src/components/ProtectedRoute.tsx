@@ -42,10 +42,5 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
     return <Navigate to="/onboarding" />;
   }
 
-  // Prevent accessing onboarding if already completed
-  if (onboardingCompleted && location.pathname === '/onboarding') {
-    return <Navigate to="/community" />;
-  }
-
   return <>{children}</>;
 } 
