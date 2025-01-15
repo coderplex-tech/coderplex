@@ -10,26 +10,34 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session) {
-        // Check onboarding status
-        supabase
-          .from('profiles')
-          .select('onboarding_completed')
-          .eq('user_id', session.user.id)
-          .single()
-          .then(({ data, error }) => {
-            if (error) {
-              console.error('Error checking onboarding status:', error);
-            }
-            setOnboardingCompleted(data?.onboarding_completed ?? false);
-            setLoading(false);
-          });
-      } else {
+    const checkSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        setSession(session);
+        
+        if (session) {
+          // Check onboarding status
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('onboarding_completed')
+            .eq('user_id', session.user.id)
+            .maybeSingle();  // Use maybeSingle() instead of single()
+
+          if (error) {
+            console.error('Error checking onboarding status:', error);
+            return;
+          }
+
+          setOnboardingCompleted(data?.onboarding_completed ?? false);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error('Session check error:', error);
         setLoading(false);
       }
-    });
+    };
+
+    checkSession();
   }, []);
 
   if (loading) {

@@ -50,11 +50,18 @@ export function Onboarding() {
       if (!session) throw new Error('No session');
 
       // First, check if profile exists
-      const { data: existingProfile } = await supabase
+      let profileCounts = { followers_count: 0, following_count: 0 };
+      const { data: existingProfile, error: profileError } = await supabase
         .from('profiles')
-        .select('*')
+        .select('followers_count, following_count')
         .eq('user_id', session.user.id)
-        .single();
+        .maybeSingle();
+
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+      } else if (existingProfile) {
+        profileCounts = existingProfile;
+      }
 
       console.log('Existing profile:', existingProfile);
 
@@ -70,8 +77,8 @@ export function Onboarding() {
         linkedin: formData.linkedin || null,
         website: formData.website || null,
         onboarding_completed: true,
-        followers_count: existingProfile?.followers_count ?? 0,
-        following_count: existingProfile?.following_count ?? 0,
+        followers_count: profileCounts.followers_count,
+        following_count: profileCounts.following_count,
       };
 
       console.log('Updating with:', profileData);
