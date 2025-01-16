@@ -52,6 +52,8 @@ export function Login() {
               is_student: false,
               is_employed: false,
               is_freelance: false,
+              followers_count: 0,
+              following_count: 0,
             };
             
             console.log('Creating new profile:', newProfile); // Log the profile data

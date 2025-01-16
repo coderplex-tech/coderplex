@@ -11,6 +11,12 @@ export interface Profile {
   created_at?: string;
   updated_at?: string;
   avatar_url: string | null;
+  followers_count: number;
+  following_count: number;
+  is_student: boolean;
+  is_employed: boolean;
+  is_freelance: boolean;
+  onboarding_completed: boolean;
 }
 
 export interface FormData {
@@ -23,4 +29,9 @@ export interface FormData {
   website: string;
   role: string;
   avatar_url: string;
+  followers_count: number;
+  following_count: number;
+  is_student: boolean;
+  is_employed: boolean;
+  is_freelance: boolean;
 }

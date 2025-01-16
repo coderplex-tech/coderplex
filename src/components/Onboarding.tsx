@@ -38,6 +38,8 @@ const onboardingSchema = z.object({
   is_student: z.boolean(),
   is_employed: z.boolean(),
   is_freelance: z.boolean(),
+  followers_count: z.number().default(0),
+  following_count: z.number().default(0),
 });
 
 type ValidationErrors = {
@@ -123,6 +125,8 @@ export function Onboarding({ session }: OnboardingProps) {
           user_id: session.user.id,
           ...validatedData,
           onboarding_completed: true,
+          followers_count: 0,
+          following_count: 0,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         };
