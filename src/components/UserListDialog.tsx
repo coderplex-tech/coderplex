@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Profile } from '../types';
 import { Button } from './ui/Button';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 
 interface UserListDialogProps {
   isOpen: boolean;
@@ -34,6 +35,24 @@ export function UserListDialog({ isOpen, onClose, userId, type, title }: UserLis
   const [loading, setLoading] = useState(true);
   const [avatarUrls, setAvatarUrls] = useState<{ [key: string]: string }>({});
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  // Handle click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dialogRef.current && !dialogRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
 
   // Get current user's ID when component mounts
   useEffect(() => {
@@ -107,19 +126,22 @@ export function UserListDialog({ isOpen, onClose, userId, type, title }: UserLis
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-dark-800 rounded-lg shadow-xl max-w-md w-full max-h-[80vh] flex flex-col">
+      <div 
+        ref={dialogRef}
+        className="bg-white dark:bg-dark-800 rounded-lg shadow-xl max-w-md w-full max-h-[80vh] flex flex-col"
+      >
         <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
             {title}
           </h3>
-          <Button
+          <button
             onClick={onClose}
-            variant="ghost"
-            size="sm"
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 
+            dark:hover:text-gray-200 transition-colors duration-200"
+            aria-label="Close dialog"
           >
-            ×
-          </Button>
+            <XMarkIcon className="w-6 h-6" />
+          </button>
         </div>
         
         <div className="overflow-y-auto flex-1">
