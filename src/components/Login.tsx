@@ -32,9 +32,10 @@ export function Login() {
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN') {
-        // Create a profile for new users
         if (session) {
           const { user } = session;
+          
+          // Check if profile exists
           const { data: profile } = await supabase
             .from('profiles')
             .select()
@@ -43,25 +44,23 @@ export function Login() {
 
           if (!profile) {
             // Create new profile if it doesn't exist
-            const { error } = await supabase.from('profiles').insert([
-              {
-                user_id: user.id,
-                name: user.user_metadata.full_name || user.user_metadata.name || 'New User',
-                avatar_url: user.user_metadata.avatar_url,
-                // Handle provider-specific metadata
-                github: user.app_metadata.provider === 'github' 
-                  ? `https://github.com/${user.user_metadata.user_name}`
-                  : null,
-                // Add Google-specific data
-                website: user.app_metadata.provider === 'google' && user.user_metadata.picture
-                  ? user.user_metadata.picture
-                  : null,
-                // You can also add email if needed (requires email scope)
-                // email: user.email,
-              }
-            ]);
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .insert([
+                {
+                  user_id: user.id,
+                  name: user.user_metadata.full_name || user.user_metadata.name || '',
+                  avatar_url: user.user_metadata.avatar_url || null,
+                  onboarding_completed: false,
+                  is_student: false,
+                  is_employed: false,
+                  is_freelance: false,
+                }
+              ]);
 
-            if (error) console.error('Error creating profile:', error);
+            if (profileError) {
+              console.error('Error creating profile:', profileError);
+            }
           }
         }
         navigate('/community');

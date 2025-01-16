@@ -87,18 +87,40 @@ export function Onboarding({ session }: OnboardingProps) {
     try {
       const validatedData = onboardingSchema.parse(formData);
 
-      const { error: supabaseError } = await supabase
+      // First check if profile exists
+      const { data: existingProfile } = await supabase
         .from('profiles')
-        .update({
-          ...validatedData,
-          onboarding_completed: true,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('user_id', session.user.id);
+        .select()
+        .eq('user_id', session.user.id)
+        .maybeSingle();
 
-      if (supabaseError) {
-        throw supabaseError;
+      let updateError;
+      if (existingProfile) {
+        // Update existing profile
+        const { error } = await supabase
+          .from('profiles')
+          .update({
+            ...validatedData,
+            onboarding_completed: true,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('user_id', session.user.id);
+        updateError = error;
+      } else {
+        // Create new profile
+        const { error } = await supabase
+          .from('profiles')
+          .insert([{
+            user_id: session.user.id,
+            ...validatedData,
+            onboarding_completed: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          }]);
+        updateError = error;
       }
+
+      if (updateError) throw updateError;
 
       // Redirect to community page after successful onboarding
       navigate('/community');

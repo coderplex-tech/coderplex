@@ -19,12 +19,18 @@ export function ProtectedRoute({ session, children }: ProtectedRouteProps) {
           .from('profiles')
           .select('onboarding_completed')
           .eq('user_id', session.user.id)
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
-        setOnboardingCompleted(data.onboarding_completed);
+        
+        if (!data || !data.onboarding_completed) {
+          setOnboardingCompleted(false);
+        } else {
+          setOnboardingCompleted(true);
+        }
       } catch (error) {
         console.error('Error checking onboarding status:', error);
+        setOnboardingCompleted(false);
       } finally {
         setLoading(false);
       }
