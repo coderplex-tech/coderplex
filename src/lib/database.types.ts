@@ -22,6 +22,10 @@ export interface Database {
           role: string | null
           created_at: string
           updated_at: string | null
+          is_student: boolean
+          is_employed: boolean
+          is_freelance: boolean
+          onboarding_completed: boolean
         }
         Insert: {
           user_id: string
@@ -35,6 +39,10 @@ export interface Database {
           role?: string | null
           created_at?: string
           updated_at?: string | null
+          is_student?: boolean
+          is_employed?: boolean
+          is_freelance?: boolean
+          onboarding_completed?: boolean
         }
         Update: {
           user_id?: string
@@ -48,6 +56,10 @@ export interface Database {
           role?: string | null
           created_at?: string
           updated_at?: string | null
+          is_student?: boolean
+          is_employed?: boolean
+          is_freelance?: boolean
+          onboarding_completed?: boolean
         }
       }
     }

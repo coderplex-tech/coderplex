@@ -10,6 +10,8 @@ import { Footer } from './components/Footer';
 import { ThemeProvider } from './context/ThemeContext';
 import { supabase } from './lib/supabase';
 import { PublicProfile } from './components/PublicProfile';
+import { Onboarding } from './components/Onboarding';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -51,8 +53,23 @@ function App() {
                 <Route path="/profile/:id" element={<PublicProfile />} />
                 {session ? (
                   <>
-                    <Route path="/profile" element={<UserProfile session={session} />} />
-                    <Route path="/community" element={<Community session={session} />} />
+                    <Route path="/onboarding" element={<Onboarding session={session} />} />
+                    <Route 
+                      path="/profile" 
+                      element={
+                        <ProtectedRoute session={session}>
+                          <UserProfile session={session} />
+                        </ProtectedRoute>
+                      } 
+                    />
+                    <Route 
+                      path="/community" 
+                      element={
+                        <ProtectedRoute session={session}>
+                          <Community session={session} />
+                        </ProtectedRoute>
+                      } 
+                    />
                     <Route path="/" element={<Navigate to="/community" replace />} />
                     <Route path="*" element={<Navigate to="/community" replace />} />
                   </>
