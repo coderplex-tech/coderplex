@@ -44,22 +44,30 @@ export function Login() {
 
           if (!profile) {
             // Create new profile if it doesn't exist
+            const newProfile = {
+              user_id: user.id,
+              name: user.user_metadata.full_name || user.user_metadata.name || '',
+              avatar_url: user.user_metadata.avatar_url || null,
+              onboarding_completed: false,
+              is_student: false,
+              is_employed: false,
+              is_freelance: false,
+            };
+            
+            console.log('Creating new profile:', newProfile); // Log the profile data
+
             const { error: profileError } = await supabase
               .from('profiles')
-              .insert([
-                {
-                  user_id: user.id,
-                  name: user.user_metadata.full_name || user.user_metadata.name || '',
-                  avatar_url: user.user_metadata.avatar_url || null,
-                  onboarding_completed: false,
-                  is_student: false,
-                  is_employed: false,
-                  is_freelance: false,
-                }
-              ]);
+              .insert([newProfile]);
 
             if (profileError) {
-              console.error('Error creating profile:', profileError);
+              console.error('Error creating profile:', {
+                message: profileError.message,
+                details: profileError.details,
+                hint: profileError.hint,
+                code: profileError.code,
+                data: newProfile
+              });
             }
           }
         }

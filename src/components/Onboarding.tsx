@@ -86,41 +86,63 @@ export function Onboarding({ session }: OnboardingProps) {
 
     try {
       const validatedData = onboardingSchema.parse(formData);
+      console.log('Validated data:', validatedData);
 
       // First check if profile exists
-      const { data: existingProfile } = await supabase
+      const { data: existingProfile, error: checkError } = await supabase
         .from('profiles')
         .select()
         .eq('user_id', session.user.id)
         .maybeSingle();
 
+      if (checkError) {
+        console.error('Error checking existing profile:', checkError);
+        throw checkError;
+      }
+
+      console.log('Existing profile:', existingProfile);
+
       let updateError;
       if (existingProfile) {
         // Update existing profile
+        const updateData = {
+          ...validatedData,
+          onboarding_completed: true,
+          updated_at: new Date().toISOString(),
+        };
+        console.log('Updating profile with:', updateData);
+
         const { error } = await supabase
           .from('profiles')
-          .update({
-            ...validatedData,
-            onboarding_completed: true,
-            updated_at: new Date().toISOString(),
-          })
+          .update(updateData)
           .eq('user_id', session.user.id);
         updateError = error;
       } else {
         // Create new profile
+        const insertData = {
+          user_id: session.user.id,
+          ...validatedData,
+          onboarding_completed: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+        console.log('Creating profile with:', insertData);
+
         const { error } = await supabase
           .from('profiles')
-          .insert([{
-            user_id: session.user.id,
-            ...validatedData,
-            onboarding_completed: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          }]);
+          .insert([insertData]);
         updateError = error;
       }
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error('Error updating/creating profile:', {
+          message: updateError.message,
+          details: updateError.details,
+          hint: updateError.hint,
+          code: updateError.code
+        });
+        throw updateError;
+      }
 
       // Redirect to community page after successful onboarding
       navigate('/community');
@@ -132,8 +154,13 @@ export function Onboarding({ session }: OnboardingProps) {
           errors[path] = error.message;
         });
         setValidationErrors(errors);
+        console.error('Validation errors:', errors);
       } else {
-        console.error('Error updating profile:', err);
+        console.error('Error updating profile:', {
+          error: err,
+          formData,
+          session: session.user.id
+        });
         setError('Failed to save profile. Please try again.');
       }
     } finally {
