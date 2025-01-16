@@ -13,9 +13,6 @@ export interface Profile {
   followers_count: number;
   following_count: number;
   is_following?: boolean;
-  employment_status: 'employed' | 'unemployed' | 'student';
-  looking_for_work: boolean;
-  onboarding_completed: boolean;
 }
 
 export interface FormData {
