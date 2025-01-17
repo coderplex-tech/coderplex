@@ -173,9 +173,9 @@ export function Onboarding({ session }: OnboardingProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-dark-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-light-900 dark:bg-dark-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white dark:bg-dark-800 rounded-lg shadow px-6 py-8">
+        <div className="bg-white dark:bg-dark-800 rounded-lg shadow-lg px-6 py-8 transition-colors duration-200">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               Welcome to Coderplex!
@@ -185,7 +185,7 @@ export function Onboarding({ session }: OnboardingProps) {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* Required Fields Section */}
             <div className="space-y-6 pb-6 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -194,7 +194,7 @@ export function Onboarding({ session }: OnboardingProps) {
               
               {/* Name Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -202,19 +202,20 @@ export function Onboarding({ session }: OnboardingProps) {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 
-                  shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-dark-700
-                  dark:text-white sm:text-sm"
+                  className="w-full px-4 py-2 text-gray-900 dark:text-gray-100 
+                  bg-white dark:bg-dark-700 border border-gray-300 dark:border-gray-600 
+                  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
+                  dark:focus:ring-blue-400 transition-colors duration-200"
                   required
                 />
                 {validationErrors.name && (
-                  <p className="mt-1 text-sm text-red-600">{validationErrors.name}</p>
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{validationErrors.name}</p>
                 )}
               </div>
 
               {/* Role Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Role <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -223,13 +224,14 @@ export function Onboarding({ session }: OnboardingProps) {
                   value={formData.role}
                   onChange={handleInputChange}
                   placeholder="e.g., Frontend Developer, DevOps Engineer"
-                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 
-                  shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-dark-700
-                  dark:text-white sm:text-sm"
+                  className="w-full px-4 py-2 text-gray-900 dark:text-gray-100 
+                  bg-white dark:bg-dark-700 border border-gray-300 dark:border-gray-600 
+                  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
+                  dark:focus:ring-blue-400 transition-colors duration-200"
                   required
                 />
                 {validationErrors.role && (
-                  <p className="mt-1 text-sm text-red-600">{validationErrors.role}</p>
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{validationErrors.role}</p>
                 )}
               </div>
             </div>
@@ -241,47 +243,47 @@ export function Onboarding({ session }: OnboardingProps) {
               </h2>
               
               <div className="space-y-4">
-                <div className="flex items-center">
+                <label className="flex items-center space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
                     name="is_student"
                     checked={formData.is_student}
                     onChange={handleInputChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 
-                    border-gray-300 rounded"
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded 
+                    focus:ring-blue-500 dark:border-gray-600 dark:focus:ring-blue-400"
                   />
-                  <label className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                  <span className="text-gray-700 dark:text-gray-300">
                     I am currently a student
-                  </label>
-                </div>
+                  </span>
+                </label>
 
-                <div className="flex items-center">
+                <label className="flex items-center space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
                     name="is_employed"
                     checked={formData.is_employed}
                     onChange={handleInputChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 
-                    border-gray-300 rounded"
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded 
+                    focus:ring-blue-500 dark:border-gray-600 dark:focus:ring-blue-400"
                   />
-                  <label className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                  <span className="text-gray-700 dark:text-gray-300">
                     I am currently employed
-                  </label>
-                </div>
+                  </span>
+                </label>
 
-                <div className="flex items-center">
+                <label className="flex items-center space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
                     name="is_freelance"
                     checked={formData.is_freelance}
                     onChange={handleInputChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 
-                    border-gray-300 rounded"
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded 
+                    focus:ring-blue-500 dark:border-gray-600 dark:focus:ring-blue-400"
                   />
-                  <label className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                  <span className="text-gray-700 dark:text-gray-300">
                     I am open to freelance opportunities
-                  </label>
-                </div>
+                  </span>
+                </label>
               </div>
             </div>
 
@@ -293,7 +295,7 @@ export function Onboarding({ session }: OnboardingProps) {
 
               {/* Bio Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Bio
                 </label>
                 <textarea
@@ -301,18 +303,16 @@ export function Onboarding({ session }: OnboardingProps) {
                   value={formData.bio}
                   onChange={handleInputChange}
                   rows={3}
-                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 
-                  shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-dark-700
-                  dark:text-white sm:text-sm"
+                  className="w-full px-4 py-2 text-gray-900 dark:text-gray-100 
+                  bg-white dark:bg-dark-700 border border-gray-300 dark:border-gray-600 
+                  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
+                  dark:focus:ring-blue-400 transition-colors duration-200"
                 />
-                {validationErrors.bio && (
-                  <p className="mt-1 text-sm text-red-600">{validationErrors.bio}</p>
-                )}
               </div>
 
               {/* Skills Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Skills
                 </label>
                 <input
@@ -321,38 +321,17 @@ export function Onboarding({ session }: OnboardingProps) {
                   value={formData.skills}
                   onChange={handleInputChange}
                   placeholder="e.g., JavaScript, React, Node.js"
-                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 
-                  shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-dark-700
-                  dark:text-white sm:text-sm"
+                  className="w-full px-4 py-2 text-gray-900 dark:text-gray-100 
+                  bg-white dark:bg-dark-700 border border-gray-300 dark:border-gray-600 
+                  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
+                  dark:focus:ring-blue-400 transition-colors duration-200"
                 />
-                {validationErrors.skills && (
-                  <p className="mt-1 text-sm text-red-600">{validationErrors.skills}</p>
-                )}
-              </div>
-
-              {/* Company Field */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Company
-                </label>
-                <input
-                  type="text"
-                  name="company"
-                  value={formData.company}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 
-                  shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-dark-700
-                  dark:text-white sm:text-sm"
-                />
-                {validationErrors.company && (
-                  <p className="mt-1 text-sm text-red-600">{validationErrors.company}</p>
-                )}
               </div>
 
               {/* Social Links */}
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     GitHub Profile
                   </label>
                   <input
@@ -361,17 +340,15 @@ export function Onboarding({ session }: OnboardingProps) {
                     value={formData.github}
                     onChange={handleInputChange}
                     placeholder="https://github.com/username"
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 
-                    shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-dark-700
-                    dark:text-white sm:text-sm"
+                    className="w-full px-4 py-2 text-gray-900 dark:text-gray-100 
+                    bg-white dark:bg-dark-700 border border-gray-300 dark:border-gray-600 
+                    rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
+                    dark:focus:ring-blue-400 transition-colors duration-200"
                   />
-                  {validationErrors.github && (
-                    <p className="mt-1 text-sm text-red-600">{validationErrors.github}</p>
-                  )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     LinkedIn Profile
                   </label>
                   <input
@@ -380,17 +357,15 @@ export function Onboarding({ session }: OnboardingProps) {
                     value={formData.linkedin}
                     onChange={handleInputChange}
                     placeholder="https://linkedin.com/in/username"
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 
-                    shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-dark-700
-                    dark:text-white sm:text-sm"
+                    className="w-full px-4 py-2 text-gray-900 dark:text-gray-100 
+                    bg-white dark:bg-dark-700 border border-gray-300 dark:border-gray-600 
+                    rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
+                    dark:focus:ring-blue-400 transition-colors duration-200"
                   />
-                  {validationErrors.linkedin && (
-                    <p className="mt-1 text-sm text-red-600">{validationErrors.linkedin}</p>
-                  )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Personal Website
                   </label>
                   <input
@@ -399,28 +374,33 @@ export function Onboarding({ session }: OnboardingProps) {
                     value={formData.website}
                     onChange={handleInputChange}
                     placeholder="https://example.com"
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 
-                    shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-dark-700
-                    dark:text-white sm:text-sm"
+                    className="w-full px-4 py-2 text-gray-900 dark:text-gray-100 
+                    bg-white dark:bg-dark-700 border border-gray-300 dark:border-gray-600 
+                    rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
+                    dark:focus:ring-blue-400 transition-colors duration-200"
                   />
-                  {validationErrors.website && (
-                    <p className="mt-1 text-sm text-red-600">{validationErrors.website}</p>
-                  )}
                 </div>
               </div>
             </div>
 
             {error && (
-              <div className="text-red-600 text-sm">{error}</div>
+              <div className="text-red-600 dark:text-red-400 text-sm mt-4">{error}</div>
             )}
 
-            <div className="flex justify-end">
+            <div className="flex justify-end pt-4">
               <Button
                 type="submit"
                 disabled={loading}
                 className="w-full sm:w-auto"
               >
-                {loading ? 'Saving...' : 'Complete Profile'}
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    <span className="ml-2">Saving...</span>
+                  </div>
+                ) : (
+                  'Complete Profile'
+                )}
               </Button>
             </div>
           </form>
