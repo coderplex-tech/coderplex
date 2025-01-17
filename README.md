@@ -1,4 +1,8 @@
-# React + TypeScript + Vite
+# coderplexDevCommunity()
+This is the source code for the [coderplexDevCommunity](https://coderplex.dev) platform - a professional network for software developers. 
+
+
+## Built with React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
