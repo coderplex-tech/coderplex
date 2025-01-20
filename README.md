@@ -42,3 +42,7 @@ npm run dev
 
 ### Contributing
 Please create a new branch with a relevant name off of the `develop` branch in order to contribute.
+
+### Development Server
+- We also have a development server that is live at https://develop.coderplex.dev/
+- New merges to the develop branch trigger a new deployment of this server through Cloudflare
