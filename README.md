@@ -1,55 +1,44 @@
 # coderplexDevCommunity()
-This is the source code for the [coderplexDevCommunity](https://coderplex.dev) platform - a professional network for software developers. 
+This is the source code for the [coderplexDevCommunity](https://coderplex.dev) platform - a professional network for software developers.
 
+## Tech Stack
+- Frontend: React + Vite
+- Authentication/Database/Backend: Supabase
+  - Also has a bucket named `avatars` to save the profile pictures
+  - The delete users function for Supabase cannot be run on client side, so I had to create a Serverless function named `delete-user` that is present in the same repo, that takes care of user self account deletion.
+- Deployed on Cloudflare Pages
 
-## Built with React + TypeScript + Vite
+## Getting Started
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Prerequisites
+- npm
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Local Development
+1. Clone the repo:
+```
+git clone https://github.com/coderplex-tech/coderplex.git
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+2. Install dependencies:
 ```
-# coderplex
+cd coderplex
+npm install
+```
+
+3. Configure environment variables:
+   - Create a file names `.env.local` in the root of the project folder
+   - We need 2 environment variables, `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to be configured. Use the URL and Key that connect to the development database.
+     
+     ```
+     VITE_SUPABASE_URL=<URL>
+     VITE_SUPABASE_ANON_KEY=<KEY>
+     ```
+   - Save
+     
+4. Start the local development server:
+```
+npm run dev
+```
+
+### Contributing
+Please create a new branch with a relevant name off of the `develop` branch in order to contribute.
