@@ -330,7 +330,7 @@ export function UserProfile({ session }: UserProfileProps) {
                 alt="Profile"
                 className="w-full h-full rounded-full object-cover"
               />
-              <Button
+              {editing && <Button
                 onClick={() => setIsPhotoDialogOpen(true)}
                 className="absolute -bottom-3 -right-3 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg transform translate-0"
               >
@@ -353,7 +353,7 @@ export function UserProfile({ session }: UserProfileProps) {
                     d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
                   />
                 </svg>
-              </Button>
+              </Button>}
             </div>
           )}
         </div>
