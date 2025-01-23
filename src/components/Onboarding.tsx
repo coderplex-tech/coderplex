@@ -308,6 +308,9 @@ export function Onboarding({ session }: OnboardingProps) {
                   rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
                   dark:focus:ring-blue-400 transition-colors duration-200"
                 />
+                {validationErrors.bio && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{validationErrors.bio}</p>
+                )}
               </div>
 
               {/* Skills Field */}
