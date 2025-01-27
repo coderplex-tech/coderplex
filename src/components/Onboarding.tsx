@@ -11,8 +11,8 @@ interface OnboardingProps {
 
 // Validation schema
 const onboardingSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name is too long'),
-  role: z.string().min(2, 'Role must be at least 2 characters').max(50, 'Role is too long'),
+  name: z.string().trim().min(2, 'Name must be at least 2 characters').max(50, 'Name is too long'),
+  role: z.string().trim().min(2, 'Role must be at least 2 characters').max(50, 'Role is too long'),
   bio: z.string().max(500, 'Bio must be less than 500 characters').optional(),
   skills: z.string().max(200, 'Skills list is too long')
     .refine(val => !val || val.split(',').every(skill => skill.trim().length > 0), {
