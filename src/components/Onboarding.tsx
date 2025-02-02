@@ -9,9 +9,28 @@ interface OnboardingProps {
   session: Session;
 }
 
+const checkUsernameExists = async (username: string) => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('username')
+    .eq('username', username);
+  if (error) {
+    console.error('Error checking username:', error);
+    return false;
+  }
+  return data.length > 0;
+};
+
 // Validation schema
 const onboardingSchema = z.object({
   name: z.string().trim().min(2, 'Name must be at least 2 characters').max(50, 'Name is too long'),
+  username: z.string().trim().min(3, 'Username must be at least 3 characters').max(10, 'Username is too long')
+    .refine(async (username) => {
+      const exists = await checkUsernameExists(username);
+      return !exists;
+    }, {
+      message: 'Username already exists'
+    }),
   role: z.string().trim().min(2, 'Role must be at least 2 characters').max(50, 'Role is too long'),
   bio: z.string().max(500, 'Bio must be less than 500 characters').optional(),
   skills: z.string().max(200, 'Skills list is too long')
@@ -54,6 +73,7 @@ export function Onboarding({ session }: OnboardingProps) {
   
   const [formData, setFormData] = useState({
     name: '',
+    username: '',
     role: '',
     bio: '',
     skills: '',
@@ -87,7 +107,7 @@ export function Onboarding({ session }: OnboardingProps) {
     setValidationErrors({});
 
     try {
-      const validatedData = onboardingSchema.parse(formData);
+      const validatedData = await onboardingSchema.parseAsync(formData);
       console.log('Validated data:', validatedData);
 
       // First check if profile exists
@@ -191,7 +211,7 @@ export function Onboarding({ session }: OnboardingProps) {
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                 Required Information
               </h2>
-              
+
               {/* Name Field */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -210,6 +230,27 @@ export function Onboarding({ session }: OnboardingProps) {
                 />
                 {validationErrors.name && (
                   <p className="mt-1 text-sm text-red-600 dark:text-red-400">{validationErrors.name}</p>
+                )}
+              </div>
+
+              {/* Username Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Username <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 text-gray-900 dark:text-gray-100 
+                  bg-white dark:bg-dark-700 border border-gray-300 dark:border-gray-600 
+                  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
+                  dark:focus:ring-blue-400 transition-colors duration-200"
+                  required
+                />
+                {validationErrors.username && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{validationErrors.username}</p>
                 )}
               </div>
 

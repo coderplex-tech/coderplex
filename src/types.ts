@@ -1,5 +1,6 @@
 export interface Profile {
   user_id: string;
+  username:string;
   name: string;
   bio: string | null;
   skills: string | null;
